@@ -298,12 +298,12 @@
     }
     .comment-author { color: var(--accent-amber); font-weight: 600; margin-right: 4px; }
 
-    /* ROUTE OPTIONS SIDE-BY-SIDE CONTAINER & DISTINCT BUTTONS */
+    /* ROUTE OPTIONS SIDE-BY-SIDE CONTAINER & FIXED MOBILE GRID */
     .master-options-box {
       background: #0f172a;
       border: 1px solid var(--card-border);
       border-radius: 10px;
-      padding: 12px;
+      padding: 10px;
       margin-top: 8px;
       display: flex;
       flex-direction: column;
@@ -312,8 +312,9 @@
 
     .options-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      width: 100%;
     }
 
     .opt-btn {
@@ -322,21 +323,23 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 12px 8px;
-      min-height: 72px;
+      padding: 8px 4px;
+      min-height: 64px;
       background: var(--card-bg);
       color: var(--text-main);
       border-radius: 10px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: clamp(10px, 3.2vw, 12px);
       font-weight: 600;
       transition: all 0.2s ease;
       gap: 4px;
       border: 1px solid var(--card-border);
+      overflow: hidden;
+      white-space: nowrap;
     }
 
     .opt-btn .opt-icon {
-      font-size: 20px;
+      font-size: 18px;
       line-height: 1;
     }
 
@@ -346,7 +349,7 @@
 
     /* Distinct Theme Variants for Route Options */
     .opt-btn-map {
-      border-left: 4px solid #3b82f6;
+      border-left: 3px solid #3b82f6;
     }
     .opt-btn-map:hover, .opt-btn-map.active-drawer {
       background: #1e3a8a;
@@ -354,7 +357,7 @@
     }
 
     .opt-btn-route {
-      border-left: 4px solid #f59e0b;
+      border-left: 3px solid #f59e0b;
     }
     .opt-btn-route:hover, .opt-btn-route.active-drawer {
       background: #78350f;
@@ -362,7 +365,7 @@
     }
 
     .opt-btn-add {
-      border-left: 4px solid #10b981;
+      border-left: 3px solid #10b981;
     }
     .opt-btn-add:hover, .opt-btn-add.active-drawer {
       background: #064e3b;
@@ -371,9 +374,16 @@
 
     .photo-grid {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       overflow-x: auto;
       padding: 6px 0;
+    }
+
+    /* Photo Thumbnail Container with Delete Overlay */
+    .photo-thumb-wrapper {
+      position: relative;
+      display: inline-block;
+      flex-shrink: 0;
     }
     .photo-thumb {
       width: 70px;
@@ -381,6 +391,30 @@
       border-radius: 6px;
       object-fit: cover;
       border: 1px solid var(--card-border);
+      display: block;
+    }
+    .photo-delete-btn {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--danger);
+      color: white;
+      border: 1px solid #ffffff;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      line-height: 1;
+      padding: 0;
+    }
+    .photo-delete-btn:active {
+      transform: scale(0.9);
     }
     
     .visited-card {
@@ -557,7 +591,7 @@
 
       <!-- DELETE CRAWL CREATION DRAFT BUTTON AT BOTTOM OF CREATE TAB -->
       <button class="btn btn-danger btn-large" style="margin-top: 8px;" onclick="deleteCrawlCreationDraft()">
-        Discard Crawl
+        🗑️ Discard Crawl Creation
       </button>
     </div>
   </div>
@@ -665,6 +699,11 @@
           </button>
         </div>
 
+        <!-- Standalone Host End Crawl Button inside Route Options -->
+        <div id="host-end-crawl-box" style="display: none; margin-top: 4px;">
+          <button class="btn btn-danger btn-small" style="width: 100%;" onclick="endCrawlAsHost()">🛑 End Crawl Session</button>
+        </div>
+
         <!-- Expanded Drawer Content Containers -->
         <div id="live-map-drawer" style="display: none;">
           <div id="live-map"></div>
@@ -685,11 +724,6 @@
           <div id="live-search-result-box" style="display: none; margin-top: 8px;"></div>
         </div>
       </div>
-    </div>
-
-    <!-- Standalone Host End Crawl Button -->
-    <div id="host-end-crawl-box" style="display: none; margin-top: 16px;">
-      <button class="btn btn-danger btn-small" style="width: 100%;" onclick="endCrawlAsHost()">🛑 End Crawl Session</button>
     </div>
   </div>
 
@@ -974,12 +1008,37 @@
       if (targetId === 'map-drawer' && map) setTimeout(() => google.maps.event.trigger(map, "resize"), 100);
     }
 
+    /* HOST END CRAWL VISIBILITY CONTROLLER */
+    function updateHostEndCrawlVisibility() {
+      const box = $('host-end-crawl-box');
+      if (!box) return;
+
+      const isHost = currentCrawl && getUser() === currentCrawl.hostEmail;
+      const isMasterOptionsOpen = $('master-options-drawer')?.style.display !== 'none';
+      const isMapOpen = $('live-map-drawer')?.style.display !== 'none';
+      const isRouteOpen = $('route-list-drawer')?.style.display !== 'none';
+      const isAddOpen = $('live-add-drawer')?.style.display !== 'none';
+
+      const anySubDrawerOpen = isMapOpen || isRouteOpen || isAddOpen;
+
+      if (isHost && isMasterOptionsOpen && !anySubDrawerOpen) {
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
     function toggleMasterOptionsDrawer() {
       const drawer = $('master-options-drawer');
       const btn = $('toggle-master-options-btn');
       const isHidden = drawer.style.display === 'none';
       drawer.style.display = isHidden ? 'flex' : 'none';
       btn.innerText = isHidden ? 'Close Route Options' : 'Route Options';
+      
+      if (!isHidden) {
+        closeAllRouteOptionDrawers();
+      }
+      updateHostEndCrawlVisibility();
     }
 
     /* TOGGLE FUNCTIONS FOR ROUTE OPTIONS DRAWERS WITH AUTO-CLOSE OF OTHERS */
@@ -999,6 +1058,8 @@
       if ($('btn-map-lbl')) $('btn-map-lbl').innerText = 'Route Map';
       if ($('btn-route-lbl')) $('btn-route-lbl').innerText = 'Full Route';
       if ($('btn-add-lbl')) $('btn-add-lbl').innerText = 'Add Stop';
+
+      updateHostEndCrawlVisibility();
     }
 
     function toggleLiveMapDrawer() {
@@ -1012,6 +1073,7 @@
         $('btn-map-lbl').innerText = 'Hide Map';
         if (liveMap) setTimeout(() => google.maps.event.trigger(liveMap, "resize"), 100);
       }
+      updateHostEndCrawlVisibility();
     }
 
     function toggleRouteListDrawer() {
@@ -1024,6 +1086,7 @@
         $('toggle-route-list-btn').classList.add('active-drawer');
         $('btn-route-lbl').innerText = 'Hide Route';
       }
+      updateHostEndCrawlVisibility();
     }
 
     function toggleLiveAddDrawer() {
@@ -1036,6 +1099,7 @@
         $('toggle-live-add-btn').classList.add('active-drawer');
         $('btn-add-lbl').innerText = 'Close Add';
       }
+      updateHostEndCrawlVisibility();
     }
 
     async function searchSpecificVenue() {
@@ -1333,7 +1397,11 @@
       
       $('live-title').innerText = currentCrawl.name; 
       $('live-code-badge').innerText = `Code: ${currentCrawl.code}`;
-      $('host-end-crawl-box').style.display = getUser() === currentCrawl.hostEmail ? 'block' : 'none';
+      
+      if ($('master-options-drawer')) $('master-options-drawer').style.display = 'none';
+      if ($('toggle-master-options-btn')) $('toggle-master-options-btn').innerText = 'Route Options';
+      closeAllRouteOptionDrawers();
+
       showTab('live');
 
       const { Map } = await google.maps.importLibrary("maps");
@@ -1352,7 +1420,7 @@
       trackActiveLocation();
     }
 
-    /* TARGET SPOTLIGHT CARD WITH SWAPPED BUTTON LOCATIONS */
+    /* TARGET SPOTLIGHT CARD WITH SWAPPED BUTTON LOCATIONS AND DELETABLE PHOTOS */
     function renderTargetSpotlightCard() {
       const container = $('target-spotlight-box');
       if (!currentCrawl || !currentCrawl.pubs.length) return;
@@ -1371,6 +1439,13 @@
 
       const targetPub = currentCrawl.pubs[firstUnvisitedIndex];
       const photosCount = (targetPub.photos || []).length;
+
+      const photoGridHtml = (targetPub.photos || []).map((p, pIdx) => `
+        <div class="photo-thumb-wrapper">
+          <img src="${p}" class="photo-thumb">
+          <button class="photo-delete-btn" onclick="deletePhoto(${firstUnvisitedIndex}, ${pIdx})" title="Delete Photo">✕</button>
+        </div>
+      `).join('');
 
       container.innerHTML = `
         <div class="card-row" style="margin-bottom:8px;">
@@ -1398,11 +1473,11 @@
         </div>
 
         <div class="photo-grid" style="margin-bottom:12px;">
-          ${(targetPub.photos || []).map(p => `<img src="${p}" class="photo-thumb">`).join('')}
+          ${photoGridHtml}
         </div>
 
-        <!-- Mark Stop Complete at the bottom position -->
-        <button class="btn btn-large" style="width:100%; background: var(--primary);" onclick="toggleVisited(${firstUnvisitedIndex})">
+        <!-- Mark Stop Complete at the bottom position with confirmation prompt -->
+        <button class="btn btn-large" style="width:100%; background: var(--primary);" onclick="confirmToggleVisited(${firstUnvisitedIndex})">
           ✓ Mark Stop Complete
         </button>
       `;
@@ -1486,11 +1561,18 @@
         liveMarkers.push(marker);
 
         const photosCount = (pub.photos || []).length;
+        const photoGridHtml = (pub.photos || []).map((p, pIdx) => `
+          <div class="photo-thumb-wrapper">
+            <img src="${p}" class="photo-thumb">
+            <button class="photo-delete-btn" onclick="deletePhoto(${index}, ${pIdx})" title="Delete Photo">✕</button>
+          </div>
+        `).join('');
+
         const card = document.createElement('div'); card.className = `card venue-card-orange ${pub.visited ? 'visited-card' : ''}`;
         card.innerHTML = `
           <div class="card-row">
             <div><strong>${index + 1}. ${pub.name}</strong><div style="font-size:12px; color:var(--text-muted);">Hours: ${pub.openingHours}</div></div>
-            <button class="btn btn-small ${pub.visited ? 'btn-secondary' : ''}" onclick="toggleVisited(${index})">${pub.visited ? 'Completed' : 'Mark Done'}</button>
+            <button class="btn btn-small ${pub.visited ? 'btn-secondary' : ''}" onclick="confirmToggleVisited(${index})">${pub.visited ? 'Completed' : 'Mark Done'}</button>
           </div>
           <div style="margin-top: 6px;">
             <div class="input-row"><input type="text" id="comment-input-${index}" placeholder="Comment as @${getUsername()}..."><button class="btn btn-secondary btn-small" onclick="postComment(${index})">Post</button></div>
@@ -1499,7 +1581,7 @@
               <input type="file" id="photo-input-${index}" accept="image/*" style="display:none" onchange="uploadPhoto(${index}, this)">
               <button class="btn btn-small" style="background:var(--primary);" onclick="$('photo-input-${index}').click()">Add Photo ${photosCount ? `(${photosCount})` : ''}</button>
             </div>
-            <div class="photo-grid">${(pub.photos || []).map(p => `<img src="${p}" class="photo-thumb">`).join('')}</div>
+            <div class="photo-grid">${photoGridHtml}</div>
           </div>`;
         list.appendChild(card);
       });
@@ -1516,6 +1598,18 @@
       renderLivePubList();
     }
 
+    /* CONFIRMATION POPUP FOR MARKING STOP COMPLETE / TOGGLING VISITED */
+    async function confirmToggleVisited(index) {
+      if (!currentCrawl || !currentCrawl.pubs[index]) return;
+      const pubName = currentCrawl.pubs[index].name;
+      const isCurrentlyVisited = currentCrawl.pubs[index].visited;
+      const actionText = isCurrentlyVisited ? `mark "${pubName}" as not completed` : `mark "${pubName}" as complete`;
+
+      if (confirm(`Are you sure you want to ${actionText}?`)) {
+        await toggleVisited(index);
+      }
+    }
+
     async function toggleVisited(index) {
       currentCrawl.pubs[index].visited = !currentCrawl.pubs[index].visited;
       await saveCrawl(currentCrawl); 
@@ -1523,18 +1617,68 @@
       renderLivePubList();
     }
 
+    /* DELETE PHOTO FUNCTIONALITY */
+    async function deletePhoto(pubIndex, photoIndex) {
+      if (!currentCrawl || !currentCrawl.pubs[pubIndex] || !currentCrawl.pubs[pubIndex].photos) return;
+      
+      if (confirm("Are you sure you want to delete this photo?")) {
+        currentCrawl.pubs[pubIndex].photos.splice(photoIndex, 1);
+        await saveCrawl(currentCrawl);
+        renderTargetSpotlightCard();
+        renderLivePubList();
+      }
+    }
+
+    /* COMPRESSED MOBILE PHOTO UPLOAD FIX */
     function uploadPhoto(index, input) {
-      if (input.files?.[0]) {
-        const r = new FileReader();
-        r.onload = async e => {
-          if (!currentCrawl.pubs[index].photos) currentCrawl.pubs[index].photos = [];
-          currentCrawl.pubs[index].photos.push(e.target.result);
+      if (!input.files || !input.files[0]) return;
+
+      const file = input.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+          const MAX_WIDTH = 1000;
+          const MAX_HEIGHT = 1000;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Compress to JPEG with 0.7 quality (~100-200 KB output)
+          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
+          if (!currentCrawl.pubs[index].photos) {
+            currentCrawl.pubs[index].photos = [];
+          }
+          currentCrawl.pubs[index].photos.push(compressedBase64);
+
           await saveCrawl(currentCrawl); 
           renderTargetSpotlightCard();
           renderLivePubList();
         };
-        r.readAsDataURL(input.files[0]);
-      }
+        img.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
     }
 
     async function openReviewPage(crawl) {
