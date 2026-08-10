@@ -24,7 +24,7 @@
   <!-- Google Maps JavaScript API Loader -->
   <script>
     (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-      key: "YOUR_GOOGLE_MAPS_API_KEY", // Injected automatically by server.js
+      key: "YOUR_GOOGLE_MAPS_API_KEY", // Replace with your restricted Google Maps API key
       v: "weekly"
     });
   </script>
@@ -95,6 +95,7 @@
       document.getElementById(`tab-${tabName}`).classList.add('active');
       document.getElementById(`nav-${tabName}`).classList.add('active');
 
+      // Trigger map resize event so Google Maps renders cleanly when switching tabs
       setTimeout(() => {
         if (tabName === 'create' && map) {
           google.maps.event.trigger(map, "resize");
@@ -105,6 +106,7 @@
       }, 100);
     }
 
+    // Helper: Browser Geolocation
     function getUserLocation(onSuccess, onError) {
       if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser.");
@@ -127,6 +129,7 @@
       );
     }
 
+    // Geocode user GPS location, set input field, and execute pub search
     async function useCurrentLocationForCreate() {
       getUserLocation(async (pos) => {
         try {
@@ -148,6 +151,7 @@
       });
     }
 
+    // Geocode string input
     async function searchLocation() {
       const query = document.getElementById('location-input').value;
       if (!query) return;
@@ -171,6 +175,7 @@
       }
     }
 
+    // Perform Google Places search and map updates
     async function executePubSearch(pos) {
       try {
         const { Map } = await google.maps.importLibrary("maps");
@@ -182,6 +187,7 @@
           mapId: 'DEMO_MAP_ID'
         });
 
+        // Place a distinct marker for the search origin / user position
         if (createStartMarker) createStartMarker.setMap(null);
         createStartMarker = new google.maps.Marker({
           position: pos,
@@ -298,6 +304,7 @@
       trackActiveLocation();
     }
 
+    // Active Crawl Location Tracking
     function trackActiveLocation() {
       if (!liveMap) return;
       getUserLocation((pos) => {
