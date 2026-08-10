@@ -3,164 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pub Crawl App</title>
+  <title>Pub Crawl Planner</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background-color: #f4f4f9;
-    }
-
-    /* Tab Navigation */
-    .tab-nav {
-      display: flex;
-      background-color: #ffffff;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 15px;
-      border: none;
-      background: none;
-      font-size: 16px;
-      font-weight: bold;
-      color: #555;
-      cursor: pointer;
-      transition: background-color 0.2s, color 0.2s;
-    }
-
-    .tab-btn:hover {
-      background-color: #eee;
-    }
-
-    .tab-btn.active {
-      color: #1a73e8;
-      border-bottom: 3px solid #1a73e8;
-    }
-
-    /* Tab Content Panels */
-    .tab-content {
-      display: none;
-      flex: 1;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .tab-content.active {
-      display: flex;
-    }
-
-    /* Controls Bar for Create Tab */
-    .controls {
-      display: flex;
-      gap: 10px;
-      padding: 10px;
-      background-color: #fff;
-      border-bottom: 1px solid #ddd;
-      z-index: 10;
-    }
-
-    .controls input {
-      flex: 1;
-      padding: 8px 12px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .action-btn {
-      padding: 8px 16px;
-      background-color: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .action-btn:hover {
-      background-color: #1557b0;
-    }
-
-    /* Map Containers */
-    .map-container {
-      width: 100%;
-      height: 100%;
-      flex: 1;
-    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { max-width: 800px; margin: 0 auto; padding: 20px; background: #f9f9f9; color: #333; }
+    nav { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+    nav button { padding: 10px 18px; border: none; background: #e0e0e0; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    nav button.active { background: #1f7a4d; color: white; }
+    .tab { display: none; }
+    .tab.active { display: block; }
+    #map { width: 100%; height: 350px; border-radius: 8px; margin: 15px 0; background: #eee; }
+    input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+    .btn { padding: 10px 16px; background: #1f7a4d; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+    .btn-secondary { background: #444; }
+    .card { background: white; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .input-row { display: flex; gap: 8px; margin-top: 8px; }
+    .input-row input { margin: 0; flex: 1; }
   </style>
+
+  <!-- Google Maps JavaScript API Loader -->
+  <script>
+    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+      key: "AIzaSyBdwemUf93q4DVGYGeAhXG39zRj3r8x0n0", // Replace with your restricted Google Maps API key
+      v: "weekly"
+    });
+  </script>
 </head>
 <body>
 
   <!-- Navigation Tabs -->
-  <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('active-tab')">Active Crawl</button>
-    <button class="tab-btn" onclick="switchTab('create-tab')">Create Crawl</button>
-  </div>
+  <nav>
+    <button id="nav-home" class="active" onclick="showTab('home')">🏠 Home</button>
+    <button id="nav-create" onclick="showTab('create')">➕ Create</button>
+    <button id="nav-join" onclick="showTab('join')">🔑 Join</button>
+    <button id="nav-live" onclick="showTab('live')" style="display:none;">🍺 Active Crawl</button>
+  </nav>
 
-  <!-- Active Crawl Tab -->
-  <div id="active-tab" class="tab-content active">
-    <div id="active-map" class="map-container"></div>
-  </div>
-
-  <!-- Create Crawl Tab -->
-  <div id="create-tab" class="tab-content">
-    <div class="controls">
-      <input type="text" id="start-location-input" placeholder="Start address or select from map...">
-      <button class="action-btn" onclick="useCurrentLocationForCreate()">📍 Use My Location</button>
+  <!-- HOME TAB -->
+  <div id="tab-home" class="tab active">
+    <div style="text-align: center; padding: 40px 0;">
+      <h1>🍻 Pub Crawl Planner</h1>
+      <p>Plan, share, and enjoy the perfect crawl with friends.</p>
+      <br>
+      <button class="btn" onclick="showTab('create')">Create New Crawl</button>
+      <button class="btn btn-secondary" onclick="showTab('join')">Join with Code</button>
     </div>
-    <div id="create-map" class="map-container"></div>
+  </div>
+
+  <!-- CREATE TAB -->
+  <div id="tab-create" class="tab">
+    <h2>Create Crawl</h2>
+    <input type="text" id="crawl-name" placeholder="Crawl Name (e.g., Friday Drinks)">
+    <div class="input-row">
+      <input type="text" id="location-input" placeholder="City, Postcode, or address...">
+      <button class="btn" onclick="searchLocation()">Search</button>
+      <button class="btn btn-secondary" onclick="useCurrentLocationForCreate()">📍 Use My Location</button>
+    </div>
+
+    <div id="map"></div>
+    <div id="pub-results"></div>
+    <button id="save-crawl-btn" class="btn" style="width:100%; margin-top:15px; display:none;" onclick="saveAndLaunchCrawl()">Launch Crawl (<span id="pub-count">0</span> pubs)</button>
+  </div>
+
+  <!-- JOIN TAB -->
+  <div id="tab-join" class="tab" style="text-align:center;">
+    <h2>Join Crawl</h2>
+    <input type="text" id="join-code" placeholder="Enter 6-digit Crawl Code" style="text-transform:uppercase; text-align:center; max-width:300px;">
+    <br><br>
+    <button class="btn btn-secondary" onclick="joinCrawl()">Join Crawl</button>
+  </div>
+
+  <!-- LIVE CRAWL TAB -->
+  <div id="tab-live" class="tab">
+    <h2 id="live-title">Live Crawl</h2>
+    <p>Crawl Code: <strong id="live-code">------</strong></p>
+    <div id="live-map" style="width:100%; height:300px; border-radius:8px; background:#eee; margin-bottom: 15px;"></div>
+    <h3>Pub Order</h3>
+    <div id="live-pub-list"></div>
   </div>
 
   <script>
-    let activeMap, createMap;
-    let activeUserMarker, createStartMarker;
-    let geocoder;
-    const defaultCenter = { lat: 51.5074, lng: -0.1278 }; // London fallback
+    let map, liveMap;
+    let createStartMarker, activeUserMarker;
+    let nearbyPubs = [];
+    let selectedPubs = [];
+    let currentCrawl = null;
 
-    // Initialize Google Maps (Called by Google Maps script loader)
-    function initMap() {
-      geocoder = new google.maps.Geocoder();
+    function showTab(tabName) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      document.getElementById(`nav-${tabName}`).classList.add('active');
 
-      // 1. Initialize Active Crawl Map
-      activeMap = new google.maps.Map(document.getElementById("active-map"), {
-        zoom: 15,
-        center: defaultCenter,
-        disableDefaultUI: false,
-      });
-
-      // 2. Initialize Create Crawl Map
-      createMap = new google.maps.Map(document.getElementById("create-map"), {
-        zoom: 15,
-        center: defaultCenter,
-        disableDefaultUI: false,
-      });
-
-      // Auto-locate user on the Active Crawl map immediately on load
-      trackActiveLocation();
+      // Trigger map resize event so Google Maps renders cleanly when switching tabs
+      setTimeout(() => {
+        if (tabName === 'create' && map) {
+          google.maps.event.trigger(map, "resize");
+        } else if (tabName === 'live' && liveMap) {
+          google.maps.event.trigger(liveMap, "resize");
+          trackActiveLocation();
+        }
+      }, 100);
     }
 
-    // Helper: Browser Geolocation Wrapper
+    // Helper: Browser Geolocation
     function getUserLocation(onSuccess, onError) {
       if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser.");
         return;
       }
-
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const pos = {
             lat: position.coords.latitude,
-            lng: position.coords.longitude,
+            lng: position.coords.longitude
           };
           onSuccess(pos);
         },
@@ -173,19 +129,191 @@
       );
     }
 
-    // Active Crawl: Fetch current location and show marker
-    function trackActiveLocation() {
-      getUserLocation((pos) => {
-        activeMap.setCenter(pos);
-        activeMap.setZoom(16);
+    // Geocode user GPS location, set input field, and execute pub search
+    async function useCurrentLocationForCreate() {
+      getUserLocation(async (pos) => {
+        try {
+          const { Geocoder } = await google.maps.importLibrary("geocoding");
+          const geocoder = new Geocoder();
 
+          geocoder.geocode({ location: pos }, (results, status) => {
+            if (status === "OK" && results[0]) {
+              document.getElementById("location-input").value = results[0].formatted_address;
+            } else {
+              document.getElementById("location-input").value = `${pos.lat.toFixed(5)}, ${pos.lng.toFixed(5)}`;
+            }
+            executePubSearch(pos);
+          });
+        } catch (err) {
+          console.error("Geolocation search error:", err);
+          executePubSearch(pos);
+        }
+      });
+    }
+
+    // Geocode string input
+    async function searchLocation() {
+      const query = document.getElementById('location-input').value;
+      if (!query) return;
+
+      try {
+        const { Geocoder } = await google.maps.importLibrary("geocoding");
+        const geocoder = new Geocoder();
+        const geocodeResult = await geocoder.geocode({ address: query });
+
+        if (!geocodeResult.results || !geocodeResult.results.length) {
+          alert('Location not found');
+          return;
+        }
+
+        const location = geocodeResult.results[0].geometry.location;
+        const pos = { lat: location.lat(), lng: location.lng() };
+        executePubSearch(pos);
+      } catch (err) {
+        console.error("Search error:", err);
+        alert("Search failed: " + err.message);
+      }
+    }
+
+    // Perform Google Places search and map updates
+    async function executePubSearch(pos) {
+      try {
+        const { Map } = await google.maps.importLibrary("maps");
+        const { Place } = await google.maps.importLibrary("places");
+
+        map = new Map(document.getElementById('map'), {
+          center: pos,
+          zoom: 14,
+          mapId: 'DEMO_MAP_ID'
+        });
+
+        // Place a distinct marker for the search origin / user position
+        if (createStartMarker) createStartMarker.setMap(null);
+        createStartMarker = new google.maps.Marker({
+          position: pos,
+          map: map,
+          title: "Start Location",
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 8,
+            fillColor: "#4285F4",
+            fillOpacity: 1,
+            strokeColor: "#ffffff",
+            strokeWeight: 2,
+          }
+        });
+
+        const request = {
+          fields: ["displayName", "location", "rating", "id"],
+          locationRestriction: {
+            center: pos,
+            radius: 2000
+          },
+          includedPrimaryTypes: ["bar"],
+          maxResultCount: 20
+        };
+
+        const { places } = await Place.searchNearby(request);
+
+        if (places && places.length > 0) {
+          nearbyPubs = places.map(p => ({
+            id: p.id,
+            name: p.displayName || 'Unknown Pub',
+            latitude: p.location.lat(),
+            longitude: p.location.lng(),
+            rating: p.rating || 'N/A'
+          }));
+          renderPubResults();
+        } else {
+          alert('No pubs found in this area.');
+        }
+      } catch (err) {
+        console.error("Places API error:", err);
+        alert("Venue search failed: " + err.message);
+      }
+    }
+
+    function renderPubResults() {
+      const container = document.getElementById('pub-results');
+      container.innerHTML = '<h3>Nearby Venues</h3>';
+
+      nearbyPubs.forEach(pub => {
+        new google.maps.Marker({
+          position: { lat: pub.latitude, lng: pub.longitude },
+          map: map,
+          title: pub.name
+        });
+
+        const isSelected = selectedPubs.some(p => p.id === pub.id);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div><strong>${pub.name}</strong> — ⭐ ${pub.rating}</div>
+          <button class="btn ${isSelected ? 'btn-secondary' : ''}" onclick="togglePub('${pub.id}')">
+            ${isSelected ? 'Remove' : 'Add'}
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function togglePub(id) {
+      const pub = nearbyPubs.find(p => p.id === id);
+      if (selectedPubs.some(p => p.id === id)) {
+        selectedPubs = selectedPubs.filter(p => p.id !== id);
+      } else {
+        selectedPubs.push(pub);
+      }
+      document.getElementById('pub-count').innerText = selectedPubs.length;
+      document.getElementById('save-crawl-btn').style.display = selectedPubs.length >= 2 ? 'block' : 'none';
+      renderPubResults();
+    }
+
+    function saveAndLaunchCrawl() {
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const name = document.getElementById('crawl-name').value || 'My Pub Crawl';
+      currentCrawl = { code, name, pubs: selectedPubs };
+
+      localStorage.setItem(`crawl-${code}`, JSON.stringify(currentCrawl));
+      loadLiveCrawl(currentCrawl);
+    }
+
+    function joinCrawl() {
+      const code = document.getElementById('join-code').value.toUpperCase();
+      const found = localStorage.getItem(`crawl-${code}`);
+      if (found) {
+        currentCrawl = JSON.parse(found);
+        loadLiveCrawl(currentCrawl);
+      } else {
+        alert("Crawl code not found on this device.");
+      }
+    }
+
+    async function loadLiveCrawl(crawl) {
+      document.getElementById('nav-live').style.display = 'inline-block';
+      document.getElementById('live-title').innerText = `🍻 ${crawl.name}`;
+      document.getElementById('live-code').innerText = crawl.code;
+
+      showTab('live');
+
+      const { Map } = await google.maps.importLibrary("maps");
+      const center = { lat: crawl.pubs[0].latitude, lng: crawl.pubs[0].longitude };
+      liveMap = new Map(document.getElementById('live-map'), { center, zoom: 14 });
+
+      renderLivePubList();
+      trackActiveLocation();
+    }
+
+    // Active Crawl Location Tracking
+    function trackActiveLocation() {
+      if (!liveMap) return;
+      getUserLocation((pos) => {
         if (activeUserMarker) {
           activeUserMarker.setPosition(pos);
         } else {
-          // Blue pulse-style marker for current user location
           activeUserMarker = new google.maps.Marker({
             position: pos,
-            map: activeMap,
+            map: liveMap,
             title: "Your Location",
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
@@ -200,59 +328,39 @@
       });
     }
 
-    // Create Crawl: Button handler to center map and fill start address
-    function useCurrentLocationForCreate() {
-      getUserLocation((pos) => {
-        createMap.setCenter(pos);
-        createMap.setZoom(16);
+    function renderLivePubList() {
+      const list = document.getElementById('live-pub-list');
+      list.innerHTML = '';
 
-        // Place or move start marker
-        if (createStartMarker) {
-          createStartMarker.setPosition(pos);
-        } else {
-          createStartMarker = new google.maps.Marker({
-            position: pos,
-            map: createMap,
-            title: "Start Location",
-          });
-        }
-
-        // Reverse geocode to populate address field
-        geocoder.geocode({ location: pos }, (results, status) => {
-          if (status === "OK" && results[0]) {
-            document.getElementById("start-location-input").value = results[0].formatted_address;
-          } else {
-            document.getElementById("start-location-input").value = `${pos.lat.toFixed(5)}, ${pos.lng.toFixed(5)}`;
-          }
+      currentCrawl.pubs.forEach((pub, index) => {
+        new google.maps.Marker({
+          position: { lat: pub.latitude, lng: pub.longitude },
+          map: liveMap,
+          label: `${index + 1}`
         });
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div><strong>${index + 1}. ${pub.name}</strong></div>
+          <div>
+            <button class="btn btn-secondary" style="padding: 4px 8px;" onclick="movePub(${index}, -1)" ${index === 0 ? 'disabled' : ''}>⬆️</button>
+            <button class="btn btn-secondary" style="padding: 4px 8px;" onclick="movePub(${index}, 1)" ${index === currentCrawl.pubs.length - 1 ? 'disabled' : ''}>⬇️</button>
+          </div>
+        `;
+        list.appendChild(card);
       });
     }
 
-    // Tab Switching Logic
-    function switchTab(tabId) {
-      document.querySelectorAll(".tab-content").forEach((el) => el.classList.remove("active"));
-      document.querySelectorAll(".tab-btn").forEach((el) => el.classList.remove("active"));
+    function movePub(index, direction) {
+      const target = index + direction;
+      const temp = currentCrawl.pubs[index];
+      currentCrawl.pubs[index] = currentCrawl.pubs[target];
+      currentCrawl.pubs[target] = temp;
 
-      document.getElementById(tabId).classList.add("active");
-      event.currentTarget.classList.add("active");
-
-      // Trigger map resize recalculation so Google Maps renders properly after being unhidden
-      setTimeout(() => {
-        if (tabId === "active-tab" && activeMap) {
-          google.maps.event.trigger(activeMap, "resize");
-          trackActiveLocation();
-        } else if (tabId === "create-tab" && createMap) {
-          google.maps.event.trigger(createMap, "resize");
-        }
-      }, 100);
+      localStorage.setItem(`crawl-${currentCrawl.code}`, JSON.stringify(currentCrawl));
+      renderLivePubList();
     }
-  </script>
-
-  <!-- Google Maps API Script -->
-  <script 
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdwemUf93q4DVGYGeAhXG39zRj3r8x0n0&callback=initMap" 
-    async 
-    defer>
   </script>
 </body>
 </html>
