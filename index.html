@@ -18,7 +18,7 @@
     .btn-secondary { background: #444; }
     .card { background: white; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
   </style>
-  <!-- Load Google Maps JavaScript SDK directly -->
+  <!-- Replace YOUR_GOOGLE_MAPS_API_KEY with your restricted API key -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdwemUf93q4DVGYGeAhXG39zRj3r8x0n0&libraries=places"></script>
 </head>
 <body>
@@ -103,12 +103,14 @@
 
           // Fetch nearby pubs using Google Places Service directly in browser
           const service = new google.maps.places.PlacesService(map);
-          service.nearbySearch({
+          const request = {
             location: location,
             radius: 2000,
-            type: ['bar']
-          }, (places, placesStatus) => {
-            if (placesStatus === google.maps.places.PlacesServiceStatus.OK) {
+            type: 'bar' // Correct single string for legacy PlacesService
+          };
+
+          service.nearbySearch(request, (places, placesStatus) => {
+            if (placesStatus === google.maps.places.PlacesServiceStatus.OK && places) {
               nearbyPubs = places.map(p => ({
                 id: p.place_id,
                 name: p.name,
@@ -118,7 +120,7 @@
               }));
               renderPubResults();
             } else {
-              alert('No pubs found in this area.');
+              alert('No pubs found in this area or status error: ' + placesStatus);
             }
           });
         } else {
