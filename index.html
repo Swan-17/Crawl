@@ -13,19 +13,14 @@
       --card-border: #334155;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --accent-blue: #3b82f6;
-      --accent-amber: #f59e0b;
+      --accent: #f59e0b;
       --danger: #ef4444;
-      --status-active-bg: rgba(59, 130, 246, 0.15);
-      --status-active-border: #3b82f6;
-      --status-done-bg: rgba(16, 185, 129, 0.12);
-      --status-done-border: #10b981;
     }
 
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     
     body {
-      max-width: 880px;
+      max-width: 850px;
       margin: 0 auto;
       padding: 16px;
       background: var(--bg-dark);
@@ -33,7 +28,7 @@
       min-height: 100vh;
     }
 
-    /* Navigation */
+    /* Simplified Main Navigation Bar */
     nav {
       display: flex;
       gap: 8px;
@@ -42,20 +37,18 @@
       padding: 6px;
       border-radius: 12px;
       border: 1px solid var(--card-border);
-      overflow-x: auto;
     }
     
     nav button {
       flex: 1;
-      padding: 10px 14px;
+      padding: 12px 14px;
       border: none;
       background: transparent;
       color: var(--text-muted);
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 14px;
-      white-space: nowrap;
+      font-size: 15px;
       transition: all 0.2s ease;
     }
 
@@ -73,7 +66,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Common Buttons & Form Controls */
+    /* Buttons & Inputs */
     .btn {
       padding: 12px 18px;
       background: var(--primary);
@@ -83,7 +76,7 @@
       cursor: pointer;
       font-size: 15px;
       font-weight: 600;
-      transition: all 0.2s;
+      transition: background 0.2s;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -94,7 +87,7 @@
     .btn-secondary:hover { background: #475569; }
     .btn-danger { background: var(--danger); }
     .btn-danger:hover { background: #dc2626; }
-    .btn-large { width: 100%; padding: 16px; font-size: 16px; border-radius: 10px; font-weight: 700; }
+    .btn-large { width: 100%; padding: 14px; font-size: 16px; font-weight: 700; border-radius: 10px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     input, textarea {
@@ -112,9 +105,9 @@
     /* Map Elements */
     #map, #live-map {
       width: 100%;
-      height: 320px;
+      height: 360px;
       border-radius: 12px;
-      margin: 12px 0 20px 0;
+      margin: 12px 0;
       border: 1px solid var(--card-border);
     }
 
@@ -124,14 +117,16 @@
       padding-right: 4px;
       margin-top: 10px;
     }
+    .scroll-box::-webkit-scrollbar { width: 6px; }
+    .scroll-box::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 
-    /* Generic Card Component */
+    /* Cards & Components */
     .card {
       background: var(--card-bg);
-      padding: 16px;
+      padding: 14px;
       margin: 10px 0;
       border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border-radius: 10px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -143,146 +138,33 @@
     }
 
     .badge {
+      background: #334155;
       padding: 4px 10px;
-      border-radius: 20px;
+      border-radius: 12px;
       font-size: 12px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      color: var(--accent);
+      font-weight: bold;
     }
-    .badge-done { background: var(--status-done-bg); border: 1px solid var(--status-done-border); color: #34d399; }
-    .badge-active { background: var(--status-active-bg); border: 1px solid var(--status-active-border); color: #60a5fa; }
-    .badge-next { background: #334155; color: var(--text-muted); }
+    .badge-visited { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+    .badge-pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
 
     .input-row { display: flex; gap: 8px; margin-top: 8px; }
     .input-row input { margin: 0; flex: 1; }
 
-    /* Live Manager Schedule Table */
-    .schedule-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 8px;
-      margin: 10px 0 20px 0;
-    }
-    .schedule-table th {
-      text-align: left;
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 0 12px 6px 12px;
-    }
-    .schedule-row {
-      background: var(--card-bg);
-      transition: all 0.2s ease;
-    }
-    .schedule-row td {
-      padding: 12px;
-      border-top: 1px solid var(--card-border);
-      border-bottom: 1px solid var(--card-border);
-    }
-    .schedule-row td:first-child {
-      border-left: 1px solid var(--card-border);
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
-    }
-    .schedule-row td:last-child {
-      border-right: 1px solid var(--card-border);
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
-    }
-    .schedule-row.active-stop {
-      background: var(--status-active-bg);
-    }
-    .schedule-row.active-stop td {
-      border-color: var(--status-active-border);
-    }
-    .schedule-row.done-stop {
-      background: var(--status-done-bg);
-      opacity: 0.75;
-    }
-
-    /* Stats Dashboard Bar */
+    /* Live Summary Dashboard */
     .stats-bar {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      padding: 16px;
-      border-radius: 12px;
-      text-align: center;
-      margin: 16px 0;
-    }
-    .stat-item {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .stat-item + .stat-item {
-      border-left: 1px solid var(--card-border);
-    }
-    .stat-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      font-weight: 700;
-    }
-    .stat-value {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    /* Active Stop Focus Panel */
-    .active-focus-card {
-      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-      border: 2px solid var(--accent-blue);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-    .active-focus-card h3 { margin: 0 0 6px 0; font-size: 20px; color: #60a5fa; }
-    .active-focus-card p { margin: 4px 0; color: var(--text-muted); font-size: 14px; }
-
-    /* Lobby & Avatars */
-    .lobby-box {
-      text-align: center;
+      justify-content: space-around;
       background: var(--card-bg);
-      padding: 24px;
-      border-radius: 12px;
       border: 1px solid var(--card-border);
-    }
-    .code-badge {
-      font-size: 32px;
-      letter-spacing: 4px;
-      font-weight: 800;
-      color: var(--primary);
-      background: #0f172a;
-      padding: 10px 20px;
-      border-radius: 10px;
-      display: inline-block;
+      padding: 16px;
+      border-radius: 12px;
       margin: 12px 0;
-      border: 1px dashed var(--primary);
+      text-align: center;
     }
-    .participants-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin: 16px 0;
-    }
-    .avatar-chip {
-      background: #334155;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .stat-box { display: flex; flex-direction: column; gap: 4px; }
+    .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
+    .stat-value { font-size: 20px; font-weight: bold; color: var(--text-main); }
 
     /* Photo Grid */
     .photo-grid {
@@ -298,54 +180,69 @@
       object-fit: cover;
       border: 1px solid var(--card-border);
     }
+    
+    .visited-card {
+      border-left: 4px solid var(--primary);
+      opacity: 0.85;
+    }
+    .brand-title {
+      cursor: pointer;
+      user-select: none;
+    }
   </style>
 
   <!-- Google Maps JavaScript API Loader -->
   <script>
     (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-      key: "AIzaSyBdwemUf93q4DVGYGeAhXG39zRj3r8x0n0",
+      key: "AIzaSyBdwemUf93q4DVGYGeAhXG39zRj3r8x0n0", // Replace with your restricted Google Maps API key
       v: "weekly"
     });
   </script>
 </head>
 <body>
 
-  <!-- Navigation Tabs -->
+  <!-- Top Navigation Bar -->
   <nav>
-    <button id="nav-home" class="active" onclick="showTab('home')">🏠 Home</button>
+    <button id="nav-account" onclick="showTab('account')">👤 Account</button>
+    <button id="nav-create" onclick="showTab('create')">➕ Create Crawl</button>
     <button id="nav-mycrawls" onclick="showTab('mycrawls')">🍺 My Crawls</button>
-    <button id="nav-create" onclick="showTab('create')">➕ Create</button>
-    <button id="nav-join" onclick="showTab('join')">🔑 Join</button>
-    <button id="nav-setup" style="display:none;" onclick="showTab('setup')">⚙️ Setup</button>
-    <button id="nav-lobby" style="display:none;" onclick="showTab('lobby')">👥 Lobby</button>
-    <button id="nav-live" style="display:none;" onclick="showTab('live')">🚀 Active Crawl</button>
   </nav>
 
-  <!-- HOME TAB -->
+  <!-- HOME TAB (Default View) -->
   <div id="tab-home" class="tab active">
     <div style="text-align: center; padding: 40px 10px;">
-      <h1>🍻 Pub Crawl Manager</h1>
-      <p style="color: var(--text-muted);">Plan routes, track group progress, and enjoy recommended pours along the way.</p>
+      <h1 class="brand-title" onclick="showTab('home')">🍻 Pub Crawl Planner</h1>
+      <p style="color: var(--text-muted);">Plan routes, check opening hours, invite friends, and track your stops live.</p>
       <br>
-      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 320px; margin: 0 auto;">
-        <button class="btn" onclick="showTab('create')">➕ Create New Crawl</button>
-        <button class="btn btn-secondary" onclick="showTab('join')">🔑 Join with Code</button>
-        <button class="btn btn-secondary" onclick="showTab('mycrawls')">📚 My Crawls History</button>
+      <div style="display: flex; flex-direction: column; gap: 14px; max-width: 320px; margin: 0 auto;">
+        <button class="btn btn-large" onclick="showTab('create')">➕ Create Crawl</button>
+        <button class="btn btn-large btn-secondary" onclick="showTab('join')">🔑 Join Crawl</button>
+        <button class="btn btn-large btn-secondary" onclick="showTab('mycrawls')">📚 My Crawls</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ACCOUNT TAB -->
+  <div id="tab-account" class="tab">
+    <h2>👤 User Account</h2>
+    <div class="card">
+      <label>Your Name / Display Name:</label>
+      <input type="text" id="account-name" value="Crawler" onchange="saveAccountName(this.value)">
+      <p style="color: var(--text-muted); font-size: 13px;">This name will be shown when you join or host pub crawls.</p>
     </div>
   </div>
 
   <!-- MY CRAWLS TAB -->
   <div id="tab-mycrawls" class="tab">
-    <h2>📚 My Past & Active Crawls</h2>
-    <p style="color: var(--text-muted);">All the crawls you've created or joined on this device.</p>
+    <h2>📚 My Crawls</h2>
+    <p style="color: var(--text-muted);">All the crawls created on or saved to this device.</p>
     <div id="my-crawls-list"></div>
   </div>
 
-  <!-- CREATE TAB -->
+  <!-- CREATE CRAWL TAB -->
   <div id="tab-create" class="tab">
     <h2>➕ Create Crawl</h2>
-    <input type="text" id="crawl-name" placeholder="Crawl Name (e.g., Craft Beer Expedition)">
+    <input type="text" id="crawl-name" placeholder="Crawl Name (e.g., Saturday Night Crawl)">
     
     <div class="input-row">
       <input type="text" id="location-input" placeholder="City, Postcode, or area...">
@@ -353,7 +250,7 @@
       <button class="btn btn-secondary" onclick="useCurrentLocationForCreate()">📍 Near Me</button>
     </div>
 
-    <!-- Interactive Map -->
+    <!-- Map View -->
     <div id="map"></div>
 
     <h3>Nearby Venues</h3>
@@ -362,118 +259,92 @@
     </div>
 
     <button id="save-crawl-btn" class="btn btn-large" style="margin-top:15px; display:none;" onclick="goToSetupTab()">
-      Setup Crawl (<span id="pub-count">0</span> Selected) ➡️
+      Setup Crawl Route (<span id="pub-count">0</span> Selected) ➡️
     </button>
   </div>
 
-  <!-- SETUP CRAWL TAB -->
+  <!-- SETUP ROUTE TAB -->
   <div id="tab-setup" class="tab">
-    <h2>⚙️ Route Setup & Recommended Pours</h2>
-    <p style="color: var(--text-muted);">Reorder your route stops and specify recommended drinks for each venue.</p>
+    <h2>⚙️ Route Order Setup</h2>
+    <p style="color: var(--text-muted);">Reorder your stops or remove venues before starting.</p>
     
     <div id="setup-pub-list"></div>
 
     <div style="display: flex; gap: 10px; margin-top: 15px;">
-      <button class="btn btn-secondary" style="flex:1;" onclick="showTab('create')">➕ Add Venues</button>
-      <button class="btn" style="flex:1;" onclick="launchLobby()">🚀 Launch Lobby</button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="showTab('create')">➕ Add More</button>
+      <button class="btn" style="flex:1;" onclick="launchLobby()">🚀 Finish Setup</button>
     </div>
   </div>
 
   <!-- JOIN TAB -->
   <div id="tab-join" class="tab" style="text-align:center;">
     <h2>🔑 Join Crawl</h2>
-    <p style="color: var(--text-muted);">Got a session code from a friend? Enter it below.</p>
-    <input type="text" id="join-code" placeholder="ENTER CODE" style="text-transform:uppercase; text-align:center; max-width:280px; font-size:20px; letter-spacing:2px;">
+    <p style="color: var(--text-muted);">Got a unique code from a friend? Enter it below to load it on any device.</p>
+    <input type="text" id="join-code" placeholder="ENTER CODE" style="text-transform:uppercase; text-align:center; max-width:280px; font-size:22px; letter-spacing:3px;">
     <br><br>
-    <button class="btn" onclick="joinCrawl()">Join Crawl</button>
+    <button class="btn btn-large" style="max-width:280px;" onclick="joinCrawl()">Join Session</button>
   </div>
 
   <!-- LOBBY TAB -->
   <div id="tab-lobby" class="tab">
-    <div class="lobby-box">
+    <div style="text-align: center; background: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--card-border);">
       <h2 id="lobby-crawl-title">Pub Crawl Lobby</h2>
-      <p style="color: var(--text-muted);">Share this code with your group to join the live session:</p>
+      <p style="color: var(--text-muted);">Share this code with your crew to join from any device:</p>
       
-      <div class="code-badge" id="lobby-code">------</div>
+      <div style="font-size: 32px; letter-spacing: 4px; font-weight: 800; color: var(--primary); background: #0f172a; padding: 10px 20px; border-radius: 10px; display: inline-block; margin: 12px 0; border: 1px dashed var(--primary);" id="lobby-code">------</div>
       <br>
       <button class="btn btn-secondary" onclick="copyCrawlCode()">📋 Copy Share Code</button>
 
       <div style="margin-top: 24px;">
-        <h3>Crew Members</h3>
+        <h3>Participants</h3>
         <div class="input-row" style="max-width: 320px; margin: 10px auto;">
-          <input type="text" id="user-name-input" placeholder="Your Name" value="Host">
-          <button class="btn btn-secondary" onclick="addParticipant()">Add Member</button>
+          <input type="text" id="user-name-input" placeholder="Your Name">
+          <button class="btn btn-secondary" onclick="addParticipant()">Add Participant</button>
         </div>
-        <div class="participants-grid" id="participants-list"></div>
+        <div id="participants-list" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 16px 0;"></div>
       </div>
 
       <br>
-      <button class="btn btn-large" onclick="startActiveCrawl()">▶️ Start Live Crawl!</button>
+      <button class="btn btn-large" onclick="startActiveCrawl()">▶️ Start Active Crawl!</button>
     </div>
   </div>
 
-  <!-- LIVE ACTIVE CRAWL TAB (MOCKUP-ALIGNED UI) -->
+  <!-- LIVE CRAWL TAB -->
   <div id="tab-live" class="tab">
     <div class="card-row">
       <h2 id="live-title" style="margin: 0;">Active Crawl</h2>
-      <span class="badge badge-active" id="live-code-badge">Code: ------</span>
+      <span class="badge" id="live-code-badge">Code: ------</span>
     </div>
-
-    <!-- Active Stop Highlight Box -->
-    <div id="active-focus-container" class="active-focus-card" style="margin-top: 15px;">
-      <!-- Populated dynamically -->
-    </div>
-
-    <!-- Crawl Schedule / Table View -->
-    <table class="schedule-table">
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>Pub Name</th>
-          <th>Recommended Pour</th>
-        </tr>
-      </thead>
-      <tbody id="schedule-table-body">
-        <!-- Dynamic Schedule Rows -->
-      </tbody>
-    </table>
 
     <!-- Live Stats Bar -->
     <div class="stats-bar">
-      <div class="stat-item">
-        <span class="stat-label">Pubs Completed</span>
-        <span class="stat-value" id="stat-completed">0 / 0</span>
+      <div class="stat-box">
+        <span class="stat-label">Progress</span>
+        <span class="stat-value" id="stat-completed">0 / 0 Visited</span>
       </div>
-      <div class="stat-item">
-        <span class="stat-label">Distance Walked</span>
-        <span class="stat-value" id="stat-distance">0.0 mi</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Group Status</span>
-        <span class="stat-value" id="stat-status" style="color:#10b981;">On Pace</span>
+      <div class="stat-box">
+        <span class="stat-label">Current Stop</span>
+        <span class="stat-value" id="stat-current">None</span>
       </div>
     </div>
-
-    <!-- Map View -->
+    
+    <!-- Interactive Map with Numbered Markers -->
     <div id="live-map"></div>
 
-    <!-- Action Bar -->
-    <button class="btn btn-large" style="margin-bottom: 20px;" onclick="checkInCurrentStop()">
-      ■ Check In at Current Stop
-    </button>
-
-    <h3>Photos & Journal Notes</h3>
-    <div id="live-pub-notes-list"></div>
+    <h3>Pub Route & Check-ins</h3>
+    <div id="live-pub-list"></div>
   </div>
 
   <script>
     let map, liveMap;
-    let infoWindow;
-    let createStartMarker, activeUserMarker;
     let nearbyPubs = [];
     let selectedPubs = [];
     let currentCrawl = null;
-    let markersMap = new Map();
+    let liveMarkers = [];
+
+    // Cloud Storage Endpoint for Cross-Device Code Syncing
+    const CLOUD_SYNC_URL = "https://keyvalue.immanuel.co/api/KeyVal";
+    const APP_PREFIX = "PUB_CRAWL_APP_2026_";
 
     function getCrawlsHistory() {
       return JSON.parse(localStorage.getItem('pub_crawl_history') || '{}');
@@ -485,25 +356,73 @@
       localStorage.setItem('pub_crawl_history', JSON.stringify(history));
     }
 
+    async function saveCrawlToCloud(crawl) {
+      saveCrawlToHistory(crawl);
+      try {
+        const key = APP_PREFIX + crawl.code;
+        const val = encodeURIComponent(JSON.stringify(crawl));
+        await fetch(`${CLOUD_SYNC_URL}/UpdateValue/${key}/${val}`, { method: 'POST' });
+      } catch (err) {
+        console.warn("Cloud sync failed, stored locally:", err);
+      }
+    }
+
+    async function fetchCrawlFromCloud(code) {
+      const history = getCrawlsHistory();
+      if (history[code]) return history[code];
+
+      try {
+        const key = APP_PREFIX + code;
+        const response = await fetch(`${CLOUD_SYNC_URL}/GetValue/${key}`);
+        if (response.ok) {
+          const raw = await response.text();
+          if (raw && raw !== "null") {
+            const crawl = JSON.parse(decodeURIComponent(JSON.parse(raw)));
+            saveCrawlToHistory(crawl);
+            return crawl;
+          }
+        }
+      } catch (err) {
+        console.warn("Could not fetch cloud crawl:", err);
+      }
+      return null;
+    }
+
+    function saveAccountName(name) {
+      localStorage.setItem('pub_crawl_user_name', name);
+    }
+
+    function getAccountName() {
+      return localStorage.getItem('pub_crawl_user_name') || 'Crawler';
+    }
+
+    // Navigation Switcher
     function showTab(tabName) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
       
       const targetTab = document.getElementById(`tab-${tabName}`);
       const targetNav = document.getElementById(`nav-${tabName}`);
+      
       if (targetTab) targetTab.classList.add('active');
       if (targetNav) targetNav.classList.add('active');
 
-      if (tabName === 'mycrawls') renderMyCrawlsList();
+      if (tabName === 'account') {
+        document.getElementById('account-name').value = getAccountName();
+      } else if (tabName === 'mycrawls') {
+        renderMyCrawlsList();
+      }
 
       setTimeout(() => {
         if (tabName === 'create' && map) {
           google.maps.event.trigger(map, "resize");
         } else if (tabName === 'live' && liveMap) {
           google.maps.event.trigger(liveMap, "resize");
-          trackActiveLocation();
+          if (currentCrawl && currentCrawl.pubs.length > 0) {
+            liveMap.setCenter({ lat: currentCrawl.pubs[0].latitude, lng: currentCrawl.pubs[0].longitude });
+          }
         }
-      }, 100);
+      }, 150);
     }
 
     function getUserLocation(onSuccess, onError) {
@@ -512,15 +431,10 @@
         return;
       }
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          onSuccess({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        (error) => {
-          alert("Could not access your location. Please check browser permissions.");
-          if (onError) onError(error);
+        (pos) => onSuccess({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (err) => {
+          alert("Could not access location.");
+          if (onError) onError(err);
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
@@ -578,17 +492,10 @@
           gestureHandling: 'greedy'
         });
 
-        infoWindow = new google.maps.InfoWindow();
-
-        if (createStartMarker) createStartMarker.setMap(null);
-        createStartMarker = new google.maps.Marker({
-          position: pos,
-          map: map,
-          title: "Start Location"
-        });
+        new google.maps.Marker({ position: pos, map: map, title: "Start Location" });
 
         const request = {
-          fields: ["displayName", "location", "rating", "id", "formattedAddress"],
+          fields: ["displayName", "location", "rating", "id", "regularOpeningHours"],
           locationRestriction: { center: pos, radius: 1500 },
           includedPrimaryTypes: ["bar", "pub"],
           maxResultCount: 20
@@ -596,17 +503,26 @@
 
         const { places } = await Place.searchNearby(request);
 
-        markersMap.clear();
         if (places && places.length > 0) {
-          nearbyPubs = places.map(p => ({
-            id: p.id,
-            name: p.displayName || 'Unknown Pub',
-            address: p.formattedAddress || 'Local Venue',
-            latitude: p.location.lat(),
-            longitude: p.location.lng(),
-            rating: p.rating || 'N/A',
-            pour: 'House Specialty'
-          }));
+          nearbyPubs = places.map(p => {
+            let hoursStr = "Hours not specified";
+            if (p.regularOpeningHours) {
+              if (p.regularOpeningHours.weekdayDescriptions && p.regularOpeningHours.weekdayDescriptions.length > 0) {
+                hoursStr = p.regularOpeningHours.weekdayDescriptions[0];
+              } else if (p.regularOpeningHours.openNow !== undefined) {
+                hoursStr = p.regularOpeningHours.openNow ? "🟢 Open Now" : "🔴 Closed Now";
+              }
+            }
+
+            return {
+              id: p.id,
+              name: p.displayName || 'Unknown Pub',
+              latitude: p.location.lat(),
+              longitude: p.location.lng(),
+              rating: p.rating || 'N/A',
+              openingHours: hoursStr
+            };
+          });
           renderPubResults();
         } else {
           alert('No pubs found in this area.');
@@ -621,13 +537,11 @@
       container.innerHTML = '';
 
       nearbyPubs.forEach(pub => {
-        const marker = new google.maps.Marker({
+        new google.maps.Marker({
           position: { lat: pub.latitude, lng: pub.longitude },
           map: map,
           title: pub.name
         });
-
-        markersMap.set(pub.id, marker);
 
         const isSelected = selectedPubs.some(p => p.id === pub.id);
         const card = document.createElement('div');
@@ -636,7 +550,7 @@
           <div class="card-row">
             <div>
               <strong>${pub.name}</strong>
-              <div style="font-size:12px; color:var(--text-muted);">⭐ ${pub.rating} • ${pub.address}</div>
+              <div style="font-size:12px; color:var(--text-muted);">⭐ ${pub.rating} • 🕒 ${pub.openingHours}</div>
             </div>
             <button class="btn ${isSelected ? 'btn-secondary' : ''}" onclick="togglePub('${pub.id}')">
               ${isSelected ? 'Remove' : 'Add'}
@@ -654,7 +568,7 @@
       if (selectedPubs.some(p => p.id === id)) {
         selectedPubs = selectedPubs.filter(p => p.id !== id);
       } else {
-        selectedPubs.push({ ...pub });
+        selectedPubs.push(pub);
       }
 
       document.getElementById('pub-count').innerText = selectedPubs.length;
@@ -663,7 +577,6 @@
     }
 
     function goToSetupTab() {
-      document.getElementById('nav-setup').style.display = 'inline-block';
       renderSetupList();
       showTab('setup');
     }
@@ -682,16 +595,15 @@
         card.className = 'card';
         card.innerHTML = `
           <div class="card-row">
-            <div><strong>${index + 1}. ${pub.name}</strong></div>
+            <div>
+              <strong>Stop ${index + 1}: ${pub.name}</strong>
+              <div style="font-size:12px; color:var(--text-muted);">🕒 ${pub.openingHours}</div>
+            </div>
             <div style="display:flex; gap:6px;">
               <button class="btn btn-secondary" style="padding:4px 8px;" onclick="moveSetupPub(${index}, -1)" ${index === 0 ? 'disabled' : ''}>⬆️</button>
               <button class="btn btn-secondary" style="padding:4px 8px;" onclick="moveSetupPub(${index}, 1)" ${index === selectedPubs.length - 1 ? 'disabled' : ''}>⬇️</button>
               <button class="btn btn-danger" style="padding:4px 8px;" onclick="removeSetupPub(${index})">🗑️</button>
             </div>
-          </div>
-          <div>
-            <label style="font-size:12px; color:var(--text-muted);">Recommended Pour:</label>
-            <input type="text" value="${pub.pour}" placeholder="e.g. Double IPA / English Ale" onchange="selectedPubs[${index}].pour = this.value">
           </div>
         `;
         container.appendChild(card);
@@ -712,7 +624,7 @@
       renderSetupList();
     }
 
-    function launchLobby() {
+    async function launchLobby() {
       if (selectedPubs.length === 0) {
         alert("Please add at least one pub!");
         return;
@@ -724,26 +636,19 @@
       currentCrawl = {
         code,
         name,
-        currentIndex: 0,
-        distanceWalked: 0.2,
-        pubs: selectedPubs.map(p => ({ ...p, status: 'next', comments: '', photos: [] })),
-        participants: ['Host (You)']
+        pubs: selectedPubs.map(p => ({ ...p, visited: false, comments: '', photos: [] })),
+        participants: [getAccountName()]
       };
 
-      // Set first pub as active
-      if (currentCrawl.pubs.length > 0) {
-        currentCrawl.pubs[0].status = 'active';
-      }
-
-      saveCrawlToHistory(currentCrawl);
+      await saveCrawlToCloud(currentCrawl);
       openLobby(currentCrawl);
     }
 
     function openLobby(crawl) {
       currentCrawl = crawl;
-      document.getElementById('nav-lobby').style.display = 'inline-block';
       document.getElementById('lobby-crawl-title').innerText = crawl.name;
       document.getElementById('lobby-code').innerText = crawl.code;
+      document.getElementById('user-name-input').value = getAccountName();
       renderParticipants();
       showTab('lobby');
     }
@@ -753,18 +658,18 @@
       list.innerHTML = '';
       currentCrawl.participants.forEach(p => {
         const chip = document.createElement('div');
-        chip.className = 'avatar-chip';
+        chip.style.cssText = "background: #334155; padding: 6px 14px; border-radius: 20px; font-size: 14px;";
         chip.innerHTML = `👤 ${p}`;
         list.appendChild(chip);
       });
     }
 
-    function addParticipant() {
+    async function addParticipant() {
       const input = document.getElementById('user-name-input');
       const name = input.value.trim();
       if (name && !currentCrawl.participants.includes(name)) {
         currentCrawl.participants.push(name);
-        saveCrawlToHistory(currentCrawl);
+        await saveCrawlToCloud(currentCrawl);
         renderParticipants();
         input.value = '';
       }
@@ -772,165 +677,138 @@
 
     function copyCrawlCode() {
       navigator.clipboard.writeText(currentCrawl.code);
-      alert(`Code ${currentCrawl.code} copied!`);
+      alert(`Code ${currentCrawl.code} copied to clipboard!`);
     }
 
-    function joinCrawl() {
+    async function joinCrawl() {
       const code = document.getElementById('join-code').value.toUpperCase().trim();
-      const history = getCrawlsHistory();
-      if (history[code]) {
-        currentCrawl = history[code];
-        openLobby(currentCrawl);
+      if (!code) {
+        alert("Please enter a code");
+        return;
+      }
+
+      const crawl = await fetchCrawlFromCloud(code);
+      if (crawl) {
+        const userName = getAccountName();
+        if (!crawl.participants.includes(userName)) {
+          crawl.participants.push(userName);
+          await saveCrawlToCloud(crawl);
+        }
+        openLobby(crawl);
       } else {
-        alert("Session code not found in local history.");
+        alert("Crawl code not found. Please verify the code.");
       }
     }
 
+    // Start Live Crawl
     async function startActiveCrawl() {
-      document.getElementById('nav-live').style.display = 'inline-block';
       document.getElementById('live-title').innerText = currentCrawl.name;
       document.getElementById('live-code-badge').innerText = `Code: ${currentCrawl.code}`;
 
       showTab('live');
-      renderLiveDashboard();
 
       const { Map } = await google.maps.importLibrary("maps");
       const center = { lat: currentCrawl.pubs[0].latitude, lng: currentCrawl.pubs[0].longitude };
       
       liveMap = new Map(document.getElementById('live-map'), {
         center,
-        zoom: 14,
+        zoom: 15,
         gestureHandling: 'greedy'
       });
 
-      trackActiveLocation();
+      renderLivePubList();
     }
 
-    function renderLiveDashboard() {
-      const activePub = currentCrawl.pubs[currentCrawl.currentIndex] || currentCrawl.pubs[currentCrawl.pubs.length - 1];
-      
-      // Render Focused Active Stop Card
-      const focusContainer = document.getElementById('active-focus-container');
-      focusContainer.innerHTML = `
-        <h3>${activePub.name}</h3>
-        <p>📍 [ROUTE VIEW] ${activePub.address}</p>
-        <p>🍺 <strong>Recommended Pour:</strong> ${activePub.pour || 'Any Local Draft'}</p>
-        <p style="margin-top: 10px; font-size: 13px; color: #94a3b8;">
-          Continue following the highlighted route to your stop.
-        </p>
-      `;
-
-      // Render Schedule Table
-      const tableBody = document.getElementById('schedule-table-body');
-      tableBody.innerHTML = '';
-
-      currentCrawl.pubs.forEach((pub) => {
-        let statusBadge = `<span class="badge badge-next">🕒 Next</span>`;
-        let rowClass = 'schedule-row';
-
-        if (pub.status === 'done') {
-          statusBadge = `<span class="badge badge-done">✅ Done</span>`;
-          rowClass += ' done-stop';
-        } else if (pub.status === 'active') {
-          statusBadge = `<span class="badge badge-active">🍺 Active</span>`;
-          rowClass += ' active-stop';
-        }
-
-        const tr = document.createElement('tr');
-        tr.className = rowClass;
-        tr.innerHTML = `
-          <td>${statusBadge}</td>
-          <td><strong>${pub.name}</strong></td>
-          <td>${pub.pour || 'Standard Pour'}</td>
-        `;
-        tableBody.appendChild(tr);
-      });
-
-      // Render Stats Summary
-      const doneCount = currentCrawl.pubs.filter(p => p.status === 'done').length;
-      document.getElementById('stat-completed').innerText = `${doneCount} / ${currentCrawl.pubs.length}`;
-      document.getElementById('stat-distance').innerText = `${currentCrawl.distanceWalked.toFixed(1)} mi`;
-
-      // Render Notes/Photos Section below map
-      renderLivePubNotesList();
-    }
-
-    function checkInCurrentStop() {
-      if (currentCrawl.currentIndex < currentCrawl.pubs.length) {
-        currentCrawl.pubs[currentCrawl.currentIndex].status = 'done';
-        currentCrawl.currentIndex += 1;
-        currentCrawl.distanceWalked += 0.3;
-
-        if (currentCrawl.currentIndex < currentCrawl.pubs.length) {
-          currentCrawl.pubs[currentCrawl.currentIndex].status = 'active';
-        }
-
-        saveCrawlToHistory(currentCrawl);
-        renderLiveDashboard();
-      } else {
-        alert("Congratulations! You've completed the crawl!");
-      }
-    }
-
-    function renderLivePubNotesList() {
-      const list = document.getElementById('live-pub-notes-list');
+    // Render Live Pub List & Map Markers Numbered by Order
+    function renderLivePubList() {
+      const list = document.getElementById('live-pub-list');
       list.innerHTML = '';
 
+      // Clear existing markers
+      liveMarkers.forEach(m => m.setMap(null));
+      liveMarkers = [];
+
+      let completedCount = 0;
+      let currentPubName = "Completed!";
+
       currentCrawl.pubs.forEach((pub, index) => {
+        if (pub.visited) completedCount++;
+        else if (currentPubName === "Completed!") currentPubName = `#${index + 1} ${pub.name}`;
+
+        // Create Numbered Map Marker (1, 2, 3...)
+        const marker = new google.maps.Marker({
+          position: { lat: pub.latitude, lng: pub.longitude },
+          map: liveMap,
+          label: {
+            text: `${index + 1}`,
+            color: "#ffffff",
+            fontWeight: "bold",
+            fontSize: "14px"
+          },
+          title: `${index + 1}. ${pub.name}`
+        });
+
+        liveMarkers.push(marker);
+
+        // Card Render
         const card = document.createElement('div');
-        card.className = 'card';
+        card.className = `card ${pub.visited ? 'visited-card' : ''}`;
         card.innerHTML = `
           <div class="card-row">
-            <strong>${index + 1}. ${pub.name}</strong>
-            <span class="badge ${pub.status === 'done' ? 'badge-done' : 'badge-next'}">${pub.status.toUpperCase()}</span>
+            <div>
+              <strong>${index + 1}. ${pub.name}</strong>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                🕒 <strong>Opening Hours:</strong> ${pub.openingHours}
+              </div>
+            </div>
+            <button class="btn ${pub.visited ? 'btn-secondary' : ''}" onclick="toggleVisited(${index})">
+              ${pub.visited ? '✅ Visited' : 'Check In'}
+            </button>
           </div>
 
-          <textarea placeholder="Add comments / drink notes..." rows="2" onchange="saveComment(${index}, this.value)">${pub.comments || ''}</textarea>
-          
-          <div style="display:flex; justify-space-between; align-items:center;">
-            <input type="file" id="photo-input-${index}" accept="image/*" style="display:none" onchange="uploadPhoto(${index}, this)">
-            <button class="btn btn-secondary" style="font-size:12px; padding:6px 10px;" onclick="document.getElementById('photo-input-${index}').click()">📷 Add Photo</button>
-          </div>
+          <div style="margin-top: 6px;">
+            <textarea placeholder="Add comments / drink notes..." rows="2" onchange="saveComment(${index}, this.value)">${pub.comments || ''}</textarea>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <input type="file" id="photo-input-${index}" accept="image/*" style="display:none" onchange="uploadPhoto(${index}, this)">
+              <button class="btn btn-secondary" style="font-size:12px; padding:6px 10px;" onclick="document.getElementById('photo-input-${index}').click()">📷 Add Photo</button>
+            </div>
 
-          <div class="photo-grid" id="photo-grid-${index}">
-            ${(pub.photos || []).map(p => `<img src="${p}" class="photo-thumb">`).join('')}
+            <div class="photo-grid" id="photo-grid-${index}">
+              ${(pub.photos || []).map(p => `<img src="${p}" class="photo-thumb">`).join('')}
+            </div>
           </div>
         `;
         list.appendChild(card);
       });
+
+      // Update Summary Bar
+      document.getElementById('stat-completed').innerText = `${completedCount} / ${currentCrawl.pubs.length} Visited`;
+      document.getElementById('stat-current').innerText = currentPubName;
     }
 
-    function saveComment(index, text) {
+    async function toggleVisited(index) {
+      currentCrawl.pubs[index].visited = !currentCrawl.pubs[index].visited;
+      await saveCrawlToCloud(currentCrawl);
+      renderLivePubList();
+    }
+
+    async function saveComment(index, text) {
       currentCrawl.pubs[index].comments = text;
-      saveCrawlToHistory(currentCrawl);
+      await saveCrawlToCloud(currentCrawl);
     }
 
     function uploadPhoto(index, input) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = async function (e) {
           if (!currentCrawl.pubs[index].photos) currentCrawl.pubs[index].photos = [];
           currentCrawl.pubs[index].photos.push(e.target.result);
-          saveCrawlToHistory(currentCrawl);
-          renderLiveDashboard();
+          await saveCrawlToCloud(currentCrawl);
+          renderLivePubList();
         };
         reader.readAsDataURL(input.files[0]);
       }
-    }
-
-    function trackActiveLocation() {
-      if (!liveMap) return;
-      getUserLocation((pos) => {
-        if (activeUserMarker) {
-          activeUserMarker.setPosition(pos);
-        } else {
-          activeUserMarker = new google.maps.Marker({
-            position: pos,
-            map: liveMap,
-            title: "Your GPS Location"
-          });
-        }
-      });
     }
 
     function renderMyCrawlsList() {
@@ -939,7 +817,7 @@
       const keys = Object.keys(history);
 
       if (keys.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">No crawls recorded yet.</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">No crawls recorded yet. Create or join one!</p>';
         return;
       }
 
@@ -952,19 +830,19 @@
           <div class="card-row">
             <div>
               <strong>${crawl.name}</strong>
-              <div style="font-size:12px; color:var(--text-muted);">${crawl.pubs.length} Stops • Code: ${crawl.code}</div>
+              <div style="font-size:12px; color:var(--text-muted);">${crawl.pubs.length} Stops • Code: <strong>${crawl.code}</strong></div>
             </div>
-            <button class="btn" onclick='resumeCrawl("${crawl.code}")'>Resume Crawl</button>
+            <button class="btn" onclick='resumeCrawl("${crawl.code}")'>Open Crawl</button>
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    function resumeCrawl(code) {
-      const history = getCrawlsHistory();
-      if (history[code]) {
-        currentCrawl = history[code];
+    async function resumeCrawl(code) {
+      const crawl = await fetchCrawlFromCloud(code);
+      if (crawl) {
+        currentCrawl = crawl;
         startActiveCrawl();
       }
     }
