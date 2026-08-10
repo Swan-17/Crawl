@@ -169,10 +169,12 @@
       <p id="create-desc-sub" style="color: var(--text-muted);">Name your crawl and set your starting location.</p>
     </div>
 
+    <!-- Centered Crawl Name View -->
     <h2 id="centered-crawl-title" style="text-align: center; display: none; margin: 10px 0 20px 0; color: var(--primary);"></h2>
 
     <input type="text" id="crawl-name" placeholder="Crawl Name (e.g., Saturday Night Crawl)">
 
+    <!-- Location Search Drawer -->
     <div id="location-setup-drawer">
       <div class="input-row">
         <input type="text" id="location-input" placeholder="Search area address or postcode...">
@@ -181,7 +183,10 @@
       </div>
     </div>
 
+    <!-- Venue Selection Container -->
     <div id="venue-selection-container" style="display: none; flex-direction: column; gap: 10px; margin-top: 15px;">
+      
+      <!-- Option 1: Map Drawer -->
       <button id="toggle-map-btn" class="btn btn-secondary btn-large" onclick="toggleSelectionDrawer('map-drawer')">
         🗺️ Show Interactive Map
       </button>
@@ -189,6 +194,7 @@
         <div id="map"></div>
       </div>
 
+      <!-- Option 2: Venue Search Drawer -->
       <button id="toggle-search-btn" class="btn btn-secondary btn-large" onclick="toggleSelectionDrawer('venue-search-drawer')">
         🔍 Find Specific Venue
       </button>
@@ -199,6 +205,7 @@
         </div>
       </div>
 
+      <!-- Option 3: Nearby List Drawer -->
       <button id="toggle-nearby-btn" class="btn btn-secondary btn-large" onclick="toggleSelectionDrawer('pub-results')">
         🍺 Show Nearby Venues
       </button>
@@ -326,15 +333,14 @@
     let locationAutocomplete, venueAutocomplete, liveVenueAutocomplete, userCurrentCoords;
 
     // --- FIREBASE INITIALIZATION ---
-    // REPLACE THESE CREDENTIALS WITH YOUR FIREBASE PROJECT CONFIG
     const firebaseConfig = {
-      apiKey: "AIzaSy_YOUR_FIREBASE_API_KEY",
-      authDomain: "your-app-id.firebaseapp.com",
-      databaseURL: "https://your-app-id-default-rtdb.firebaseio.com",
-      projectId: "your-app-id",
-      storageBucket: "your-app-id.appspot.com",
-      messagingSenderId: "1234567890",
-      appId: "1:1234567890:web:abcdef123456"
+      apiKey: "AIzaSyAp8EloYcaRsmw7vEnYKBQMhtN3KQ182Kc",
+      authDomain: "pub-crawl-app-4d7b5.firebaseapp.com",
+      databaseURL: "https://pub-crawl-app-4d7b5-default-rtdb.firebaseio.com",
+      projectId: "pub-crawl-app-4d7b5",
+      storageBucket: "pub-crawl-app-4d7b5.firebasestorage.app",
+      messagingSenderId: "98193577386",
+      appId: "1:98193577386:web:afd02ac6e7bc3b4ac887d3"
     };
 
     let db;
@@ -342,7 +348,7 @@
       firebase.initializeApp(firebaseConfig);
       db = firebase.database();
     } catch(e) {
-      console.warn("Firebase config not yet updated:", e);
+      console.warn("Firebase config error:", e);
     }
 
     // Accounts & Crawls Storage
