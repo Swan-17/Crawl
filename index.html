@@ -18,6 +18,8 @@
     .btn-secondary { background: #444; }
     .card { background: white; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
   </style>
+  <!-- Load Google Maps JavaScript SDK directly -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVkFVJiIEQy1z3vx0aSyJvdWstigVa44I&libraries=places"></script>
 </head>
 <body>
 
@@ -77,18 +79,6 @@
     let selectedPubs = [];
     let currentCrawl = null;
 
-    // Fetch Google Maps API Key securely from the server
-    fetch('/api/config')
-      .then(res => res.json())
-      .then(config => {
-        if (!config.apiKey) return alert("Missing Google Maps Key in .env");
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${config.apiKey}`;
-        script.async = true;
-        document.head.appendChild(script);
-      });
-
-    // Navigation Switcher
     function showTab(tabName) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -96,44 +86,63 @@
       document.getElementById(`nav-${tabName}`).classList.add('active');
     }
 
-    // Search Location (OpenStreetMap Geocoding)
+    // Geocode area & search nearby pubs using Google Places SDK
     async function searchLocation() {
       const query = document.getElementById('location-input').value;
       if (!query) return;
 
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-      const data = await res.json();
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: query }, (results, status) => {
+        if (status === 'OK' && results[0]) {
+          const location = results[0].geometry.location;
 
-      if (data.length) {
-        const lat = Number(data[0].lat);
-        const lng = Number(data[0].lon);
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: location,
+            zoom: 14
+          });
 
-        // Render Map
-        map = new google.maps.Map(document.getElementById('map'), { center: { lat, lng }, zoom: 14 });
-
-        // Fetch Nearby Pubs from backend
-        const pubRes = await fetch(`/api/pubs?lat=${lat}&lng=${lng}`);
-        nearbyPubs = await pubRes.json();
-        renderPubResults();
-      } else {
-        alert("Location not found");
-      }
+          // Fetch nearby pubs using Google Places Service directly in browser
+          const service = new google.maps.places.PlacesService(map);
+          service.nearbySearch({
+            location: location,
+            radius: 2000,
+            type: ['bar']
+          }, (places, placesStatus) => {
+            if (placesStatus === google.maps.places.PlacesServiceStatus.OK) {
+              nearbyPubs = places.map(p => ({
+                id: p.place_id,
+                name: p.name,
+                latitude: p.geometry.location.lat(),
+                longitude: p.geometry.location.lng(),
+                rating: p.rating || 'N/A'
+              }));
+              renderPubResults();
+            } else {
+              alert('No pubs found in this area.');
+            }
+          });
+        } else {
+          alert('Location not found');
+        }
+      });
     }
 
-    // Render Pub List in Create Tab
     function renderPubResults() {
       const container = document.getElementById('pub-results');
       container.innerHTML = '<h3>Nearby Venues</h3>';
 
       nearbyPubs.forEach(pub => {
-        // Add Marker to Map
-        new google.maps.Marker({ position: { lat: pub.latitude, lng: pub.longitude }, map, title: pub.name });
+        new google.maps.Marker({
+          position: { lat: pub.latitude, lng: pub.longitude },
+          map: map,
+          title: pub.name
+        });
 
         const isSelected = selectedPubs.some(p => p.id === pub.id);
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-          <div><strong>${pub.name}</strong> — ⭐${pub.rating}</div>
+          <div><strong>${pub.name}</strong> — ⭐ ${pub.rating}</div>
           <button class="btn ${isSelected ? 'btn-secondary' : ''}" onclick="togglePub('${pub.id}')">
             ${isSelected ? 'Remove' : 'Add'}
           </button>
@@ -154,7 +163,6 @@
       renderPubResults();
     }
 
-    // Save Crawl to LocalStorage
     function saveAndLaunchCrawl() {
       const code = Math.random().toString(36).substring(2, 8).toUpperCase();
       const name = document.getElementById('crawl-name').value || 'My Pub Crawl';
@@ -171,7 +179,7 @@
         currentCrawl = JSON.parse(found);
         loadLiveCrawl(currentCrawl);
       } else {
-        alert("Crawl code not found in local storage");
+        alert("Crawl code not found on this device.");
       }
     }
 
@@ -182,7 +190,6 @@
 
       showTab('live');
 
-      // Load Live Map
       const center = { lat: crawl.pubs[0].latitude, lng: crawl.pubs[0].longitude };
       liveMap = new google.maps.Map(document.getElementById('live-map'), { center, zoom: 14 });
 
@@ -203,7 +210,7 @@
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-          <div><strong>${index + 1}.${pub.name}</strong></div>
+          <div><strong>${index + 1}. ${pub.name}</strong></div>
           <div>
             <button onclick="movePub(${index}, -1)" ${index === 0 ? 'disabled' : ''}>⬆️</button>
             <button onclick="movePub(${index}, 1)" ${index === currentCrawl.pubs.length - 1 ? 'disabled' : ''}>⬇️</button>
