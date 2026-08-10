@@ -72,12 +72,17 @@
     .pac-item-query { color: var(--primary); font-size: 14px; }
   </style>
 
+  <!-- Google Maps JavaScript API Loader -->
   <script>
     (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
       key: "AIzaSyBdwemUf93q4DVGYGeAhXG39zRj3r8x0n0",
       v: "weekly"
     });
   </script>
+
+  <!-- Firebase Cloud SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -164,12 +169,10 @@
       <p id="create-desc-sub" style="color: var(--text-muted);">Name your crawl and set your starting location.</p>
     </div>
 
-    <!-- Centered Crawl Name View -->
     <h2 id="centered-crawl-title" style="text-align: center; display: none; margin: 10px 0 20px 0; color: var(--primary);"></h2>
 
     <input type="text" id="crawl-name" placeholder="Crawl Name (e.g., Saturday Night Crawl)">
 
-    <!-- Location Search Drawer -->
     <div id="location-setup-drawer">
       <div class="input-row">
         <input type="text" id="location-input" placeholder="Search area address or postcode...">
@@ -178,10 +181,7 @@
       </div>
     </div>
 
-    <!-- Venue Selection Container -->
     <div id="venue-selection-container" style="display: none; flex-direction: column; gap: 10px; margin-top: 15px;">
-      
-      <!-- Option 1: Map Drawer -->
       <button id="toggle-map-btn" class="btn btn-secondary btn-large" onclick="toggleSelectionDrawer('map-drawer')">
         🗺️ Show Interactive Map
       </button>
@@ -189,7 +189,6 @@
         <div id="map"></div>
       </div>
 
-      <!-- Option 2: Venue Search Drawer -->
       <button id="toggle-search-btn" class="btn btn-secondary btn-large" onclick="toggleSelectionDrawer('venue-search-drawer')">
         🔍 Find Specific Venue
       </button>
@@ -200,7 +199,6 @@
         </div>
       </div>
 
-      <!-- Option 3: Nearby List Drawer -->
       <button id="toggle-nearby-btn" class="btn btn-secondary btn-large" onclick="toggleSelectionDrawer('pub-results')">
         🍺 Show Nearby Venues
       </button>
@@ -327,6 +325,27 @@
     let createMarkersMap = new Map(), setupMarkers = [], liveMarkers = [], reviewMarkers = [];
     let locationAutocomplete, venueAutocomplete, liveVenueAutocomplete, userCurrentCoords;
 
+    // --- FIREBASE INITIALIZATION ---
+    // REPLACE THESE CREDENTIALS WITH YOUR FIREBASE PROJECT CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSy_YOUR_FIREBASE_API_KEY",
+      authDomain: "your-app-id.firebaseapp.com",
+      databaseURL: "https://your-app-id-default-rtdb.firebaseio.com",
+      projectId: "your-app-id",
+      storageBucket: "your-app-id.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef123456"
+    };
+
+    let db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } catch(e) {
+      console.warn("Firebase config not yet updated:", e);
+    }
+
+    // Accounts & Crawls Storage
     const getDb = k => JSON.parse(localStorage.getItem(k) || '{}');
     const setDb = (k, v) => localStorage.setItem(k, JSON.stringify(v));
     const getUser = () => localStorage.getItem('pub_crawl_email');
@@ -354,32 +373,59 @@
     function handleRegister() {
       const username = $('auth-username').value.trim(), email = $('auth-email').value.trim().toLowerCase(), password = $('auth-password').value.trim();
       if (!username || !email || !password) return alert("Fill in all fields.");
-      const db = getDb('users_db');
+      const dbUsers = getDb('users_db');
       
-      if (db[email]) return alert("This email is already registered. Please Sign In.");
+      if (dbUsers[email]) return alert("This email is already registered. Please Sign In.");
       
-      db[email] = { email, password, username }; setDb('users_db', db);
+      dbUsers[email] = { email, password, username }; setDb('users_db', dbUsers);
       localStorage.setItem('pub_crawl_email', email); checkAuth(); alert("Account created and registered!");
     }
 
     function handleLogin() {
       const email = $('auth-email').value.trim().toLowerCase(), password = $('auth-password').value.trim();
-      const db = getDb('users_db');
-      if (db[email]?.password === password) {
+      const dbUsers = getDb('users_db');
+      if (dbUsers[email]?.password === password) {
         localStorage.setItem('pub_crawl_email', email); checkAuth(); alert("Signed in!");
       } else alert("Invalid credentials.");
     }
 
     function saveUsername() {
       const u = $('edit-username-input').value.trim(), e = getUser();
-      if (u && e) { const db = getDb('users_db'); if(db[e]) { db[e].username = u; setDb('users_db', db); alert("Updated!"); } }
+      if (u && e) { const dbUsers = getDb('users_db'); if(dbUsers[e]) { dbUsers[e].username = u; setDb('users_db', dbUsers); alert("Updated!"); } }
     }
 
     function handleLogout() { localStorage.removeItem('pub_crawl_email'); checkAuth(); showTab('account'); }
 
-    const saveCrawl = async c => { const h = getDb('crawls_db'); h[c.code] = c; setDb('crawls_db', h); };
-    const fetchCrawl = async code => getDb('crawls_db')[code] || null;
-    const deleteCrawl = async code => { const h = getDb('crawls_db'); delete h[code]; setDb('crawls_db', h); };
+    // REAL-TIME CLOUD DATABASE SYNC (FIREBASE + FALLBACK)
+    const saveCrawl = async c => {
+      const h = getDb('crawls_db'); h[c.code] = c; setDb('crawls_db', h);
+      if (db) {
+        try { await db.ref('crawls/' + c.code).set(c); }
+        catch(e) { console.warn("Firebase sync warning:", e); }
+      }
+    };
+
+    const fetchCrawl = async code => {
+      if (db) {
+        try {
+          const snapshot = await db.ref('crawls/' + code).once('value');
+          if (snapshot.exists()) {
+            const crawl = snapshot.val();
+            const h = getDb('crawls_db'); h[code] = crawl; setDb('crawls_db', h);
+            return crawl;
+          }
+        } catch(e) { console.warn("Firebase fetch warning:", e); }
+      }
+      return getDb('crawls_db')[code] || null;
+    };
+
+    const deleteCrawl = async code => {
+      const h = getDb('crawls_db'); delete h[code]; setDb('crawls_db', h);
+      if (db) {
+        try { await db.ref('crawls/' + code).remove(); }
+        catch(e) { console.warn("Firebase delete warning:", e); }
+      }
+    };
 
     function showTab(t) {
       document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
@@ -510,7 +556,6 @@
         inputEl.value = '';
         renderPubResults();
 
-        // Target Action: Open Interactive Map directly on venue search
         toggleSelectionDrawer('map-drawer');
         if (map) {
           map.setCenter({ lat: places[0].location.lat(), lng: places[0].location.lng() });
@@ -538,7 +583,6 @@
           openingHours: p.regularOpeningHours?.weekdayDescriptions?.[0] || (p.regularOpeningHours?.openNow !== undefined ? (p.regularOpeningHours.openNow ? "Open Now" : "Closed Now") : "Hours not specified")
         }));
 
-        // Transition UI: Hide crawl name input and location setup drawer
         const crawlNameVal = $('crawl-name').value.trim() || 'Pub Crawl';
         $('centered-crawl-title').innerText = crawlNameVal;
         $('centered-crawl-title').style.display = 'block';
@@ -547,7 +591,6 @@
         $('location-setup-drawer').style.display = 'none';
         $('venue-selection-container').style.display = 'flex';
 
-        // Auto-open interactive map on location selection
         toggleSelectionDrawer('map-drawer');
         renderPubResults();
       } else alert('No pubs found in this area.');
@@ -562,7 +605,6 @@
         const isSelected = selectedPubs.some(p => p.id === pub.id);
         const card = document.createElement('div'); card.className = 'card clickable-card';
         
-        // Target Action: Clicking card opens map directly & auto-collapses nearby list
         card.onclick = e => { 
           if (e.target.tagName !== 'BUTTON') { 
             toggleSelectionDrawer('map-drawer');
