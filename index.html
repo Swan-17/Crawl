@@ -101,7 +101,6 @@
     }
     .btn-secondary:hover { background: var(--btn-secondary-hover); }
 
-    /* Orange Border Button Styling */
     .btn-orange-border {
       background: var(--btn-secondary);
       color: var(--text-main);
@@ -142,7 +141,6 @@
     }
     input:focus, textarea:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
 
-    /* Compact Settings Layout */
     .compact-card {
       background: var(--card-bg);
       padding: 12px 14px;
@@ -160,12 +158,29 @@
     }
 
     /* Map Containers */
-    #map, #setup-map, #live-map, #review-map {
+    #map, #setup-map, #live-map, #review-map, #preview-map {
       width: 100%;
-      height: 300px;
+      height: 38vh;
+      min-height: 220px;
+      max-height: 360px;
       border-radius: 10px;
-      margin: 10px 0;
+      margin: 8px 0;
       border: 1px solid var(--card-border);
+    }
+
+    /* Custom Map InfoWindow Styling */
+    .gm-style-iw-c {
+      background-color: var(--card-bg) !important;
+      color: var(--text-main) !important;
+      border-radius: 12px !important;
+      padding: 12px !important;
+      border: 1px solid var(--card-border);
+    }
+    .gm-style-iw-tc::after {
+      background-color: var(--card-bg) !important;
+    }
+    .gm-ui-hover-effect {
+      display: none !important;
     }
 
     .scroll-box {
@@ -188,7 +203,11 @@
     }
 
     .venue-card-orange {
-      border: 2px solid var(--accent-amber) !important;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 12px;
+      margin: 8px 0;
     }
 
     .clickable-card {
@@ -220,47 +239,136 @@
       color: #34d399;
       border: 1px solid #10b981;
     }
+    .badge-live {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid var(--danger);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
 
     .input-row { display: flex; gap: 6px; margin-top: 4px; }
     .input-row input { margin: 0; flex: 1; }
 
-    /* Live Summary Dashboard */
+    /* Active Crawl UI Styling */
     .stats-bar {
-      display: flex;
-      justify-content: space-around;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .stat-box {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      padding: 12px;
       border-radius: 10px;
-      margin: 10px 0;
+      padding: 10px;
       text-align: center;
     }
-    .stat-box { display: flex; flex-direction: column; gap: 2px; }
-    .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
-    .stat-value { font-size: 18px; font-weight: bold; color: var(--accent-amber); }
+    .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .stat-value { font-size: 16px; font-weight: bold; color: var(--accent-amber); margin-top: 2px; }
 
-    /* Target Stop Spotlight Card */
     .target-spotlight-card {
-      background: var(--card-bg);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
       border: 2px solid var(--accent-amber);
-      border-radius: 10px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 16px;
       margin: 10px 0;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.15);
     }
 
-    /* Route Master Options Drawer Container */
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 6px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    .comment-item {
+      font-size: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .comment-author { color: var(--accent-amber); font-weight: 600; margin-right: 4px; }
+
+    /* ROUTE OPTIONS SIDE-BY-SIDE CONTAINER & DISTINCT BUTTONS */
     .master-options-box {
       background: #0f172a;
       border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 10px;
-      margin-top: 6px;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 8px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
     }
 
-    /* Photo Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .opt-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px 8px;
+      min-height: 72px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      gap: 4px;
+      border: 1px solid var(--card-border);
+    }
+
+    .opt-btn .opt-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .opt-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Distinct Theme Variants for Route Options */
+    .opt-btn-map {
+      border-left: 4px solid #3b82f6;
+    }
+    .opt-btn-map:hover, .opt-btn-map.active-drawer {
+      background: #1e3a8a;
+      border-color: #60a5fa;
+    }
+
+    .opt-btn-route {
+      border-left: 4px solid #f59e0b;
+    }
+    .opt-btn-route:hover, .opt-btn-route.active-drawer {
+      background: #78350f;
+      border-color: #fbbf24;
+    }
+
+    .opt-btn-add {
+      border-left: 4px solid #10b981;
+    }
+    .opt-btn-add:hover, .opt-btn-add.active-drawer {
+      background: #064e3b;
+      border-color: #34d399;
+    }
+
     .photo-grid {
       display: flex;
       gap: 6px;
@@ -276,7 +384,7 @@
     }
     
     .visited-card {
-      border-left: 3px solid var(--visited) !important;
+      border-left: 4px solid var(--visited) !important;
       opacity: 0.75;
     }
     .brand-title {
@@ -284,17 +392,6 @@
       text-align: center;
     }
 
-    /* Custom InfoWindow Dark Popup Styling */
-    .gm-style .gm-style-iw-c {
-      background-color: var(--card-bg) !important;
-      color: var(--text-main) !important;
-      border-radius: 8px !important;
-      padding: 10px !important;
-      border: 1px solid var(--card-border);
-    }
-    .gm-style .gm-style-iw-tc::after {
-      background-color: var(--card-bg) !important;
-    }
     .pac-container {
       background-color: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -308,13 +405,8 @@
       border-top: 1px solid var(--card-border);
       cursor: pointer;
     }
-    .pac-item:hover {
-      background-color: #283548;
-    }
-    .pac-item-query {
-      color: var(--primary);
-      font-size: 13px;
-    }
+    .pac-item:hover { background-color: #283548; }
+    .pac-item-query { color: var(--primary); font-size: 13px; }
   </style>
 
   <!-- Google Maps JavaScript API Loader -->
@@ -462,6 +554,11 @@
       <button id="save-crawl-btn" class="btn btn-large" style="margin-top:10px; display:none;" onclick="goToSetupTab()">
         Setup Crawl Route (<span id="pub-count">0</span> Selected)
       </button>
+
+      <!-- DELETE CRAWL CREATION DRAFT BUTTON AT BOTTOM OF CREATE TAB -->
+      <button class="btn btn-danger btn-large" style="margin-top: 8px;" onclick="deleteCrawlCreationDraft()">
+        Discard Crawl
+      </button>
     </div>
   </div>
 
@@ -473,8 +570,20 @@
     <div id="setup-pub-list"></div>
     <div style="display: flex; gap: 8px; margin-top: 12px;">
       <button class="btn btn-secondary" style="flex:1;" onclick="showTab('create')">Add More</button>
-      <button id="finish-setup-btn" class="btn" style="flex:1;" onclick="launchLobby()">Finish Setup</button>
+      <button id="finish-setup-btn" class="btn" style="flex:1;" onclick="saveCrawlDraftAndGoToMyCrawls()">Save Crawl</button>
     </div>
+  </div>
+
+  <!-- PREVIEW TAB FOR NON-HOST (UNSTARTED CRAWL) -->
+  <div id="tab-preview" class="tab">
+    <div style="text-align: center; margin-bottom: 10px;">
+      <h3 id="preview-title" style="margin: 0; color: var(--primary);">Crawl Overview</h3>
+      <span class="badge" id="preview-code-badge" style="margin-top: 4px; display: inline-block;">Code: ------</span>
+    </div>
+    <div id="preview-map"></div>
+    <p style="color: var(--text-muted); font-size: 12px; text-align: center;">Waiting for host to start the crawl live.</p>
+    <h4 style="margin: 10px 0 6px 0;">Planned Route Stops</h4>
+    <div id="preview-pub-list"></div>
   </div>
 
   <!-- JOIN TAB -->
@@ -499,50 +608,73 @@
         <div id="participants-list" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;"></div>
       </div>
       <br>
-      <button class="btn btn-large" onclick="startActiveCrawl()">Save Crawl</button>
+      <button class="btn btn-large" onclick="startActiveCrawl()">Start Crawl Live</button>
     </div>
   </div>
 
   <!-- LIVE ACTIVE CRAWL TAB -->
   <div id="tab-live" class="tab">
-    <div style="text-align: center; margin-bottom: 10px;">
-      <h3 id="live-title" style="margin: 0; color: var(--accent-amber);">Active Crawl</h3>
-      <span class="badge" id="live-code-badge" style="margin-top: 4px; display: inline-block;">Code: ------</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <div>
+        <h3 id="live-title" style="margin: 0; color: var(--accent-amber); font-size: 18px;">Active Crawl</h3>
+        <span class="badge badge-live" id="live-code-badge">Code: ------</span>
+      </div>
+      <div style="text-align: right;">
+        <span style="font-size: 11px; color: var(--text-muted); display: block;">STATUS</span>
+        <span style="font-size: 12px; font-weight: bold; color: var(--primary);">LIVE NOW</span>
+      </div>
     </div>
 
+    <!-- Stats Bar -->
     <div class="stats-bar">
-      <div class="stat-box"><span class="stat-label">Progress</span><span class="stat-value" id="stat-completed">0 / 0 Visited</span></div>
-      <div class="stat-box"><span class="stat-label">Target Stop</span><span class="stat-value" id="stat-current">None</span></div>
+      <div class="stat-box">
+        <span class="stat-label">Progress</span>
+        <span class="stat-value" id="stat-completed">0 / 0</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Target Stop</span>
+        <span class="stat-value" id="stat-current" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">None</span>
+      </div>
     </div>
 
     <!-- Target Venue Spotlight Card -->
     <div id="target-spotlight-box" class="target-spotlight-card"></div>
 
-    <!-- Master Route Options Drawer Button with Orange Border -->
+    <!-- Master Route Options Drawer -->
     <div style="margin-top: 12px;">
       <button id="toggle-master-options-btn" class="btn btn-orange-border btn-large" onclick="toggleMasterOptionsDrawer()">
         Route Options
       </button>
 
       <div id="master-options-drawer" class="master-options-box" style="display: none;">
-        <button id="toggle-live-map-btn" class="btn btn-orange-border btn-large" onclick="toggleLiveMapDrawer()">
-          🗺️ View Route Map
-        </button>
+        <!-- Side-by-side Distinct Buttons Container -->
+        <div class="options-grid">
+          <button id="toggle-live-map-btn" class="opt-btn opt-btn-map" onclick="toggleLiveMapDrawer()">
+            <span class="opt-icon">🗺️</span>
+            <span id="btn-map-lbl">Route Map</span>
+          </button>
+
+          <button id="toggle-route-list-btn" class="opt-btn opt-btn-route" onclick="toggleRouteListDrawer()">
+            <span class="opt-icon">📋</span>
+            <span id="btn-route-lbl">Full Route</span>
+          </button>
+
+          <button id="toggle-live-add-btn" class="opt-btn opt-btn-add" onclick="toggleLiveAddDrawer()">
+            <span class="opt-icon">➕</span>
+            <span id="btn-add-lbl">Add Stop</span>
+          </button>
+        </div>
+
+        <!-- Expanded Drawer Content Containers -->
         <div id="live-map-drawer" style="display: none;">
           <div id="live-map"></div>
         </div>
 
-        <button id="toggle-route-list-btn" class="btn btn-orange-border btn-large" onclick="toggleRouteListDrawer()">
-          📋 View Full Route & History
-        </button>
         <div id="route-list-drawer" style="display: none;">
           <h4 style="margin:6px 0; color: var(--accent-amber);">Full Route & Check-ins</h4>
           <div id="live-pub-list"></div>
         </div>
 
-        <button id="toggle-live-add-btn" class="btn btn-orange-border btn-large" onclick="toggleDrawer('live-add-drawer', 'toggle-live-add-btn', '➕ Add Venue to Crawl', 'Close Add Venue')">
-          ➕ Add Venue to Crawl
-        </button>
         <div id="live-add-drawer" class="card" style="display: none; border: 1px solid var(--primary);">
           <h4 style="margin: 0 0 4px 0;">Add Extra Stop Today</h4>
           <p style="color: var(--text-muted); font-size: 12px; margin: 0 0 6px 0;">Search for a pub by address or name.</p>
@@ -555,7 +687,7 @@
       </div>
     </div>
 
-    <!-- Standalone Host End Crawl Button at Bottom (Smaller Size) -->
+    <!-- Standalone Host End Crawl Button -->
     <div id="host-end-crawl-box" style="display: none; margin-top: 16px;">
       <button class="btn btn-danger btn-small" style="width: 100%;" onclick="endCrawlAsHost()">🛑 End Crawl Session</button>
     </div>
@@ -579,10 +711,11 @@
 
   <script>
     const $ = id => document.getElementById(id);
-    let map, setupMap, liveMap, reviewMap, createInfoWindow, setupInfoWindow, liveInfoWindow, reviewInfoWindow;
+    let map, setupMap, liveMap, reviewMap, previewMap;
+    let createInfoWindow, setupInfoWindow, liveInfoWindow, reviewInfoWindow, previewInfoWindow;
     let createStartMarker, activeUserMarker;
     let nearbyPubs = [], selectedPubs = [], currentCrawl = null, managingCrawlCode = null, pendingLiveAddPub = null;
-    let createMarkersMap = new Map(), setupMarkers = [], liveMarkers = [], reviewMarkers = [];
+    let createMarkersMap = new Map(), setupMarkers = [], liveMarkers = [], reviewMarkers = [], previewMarkers = [];
     let locationAutocomplete, venueAutocomplete, liveVenueAutocomplete, userCurrentCoords;
 
     // --- FIREBASE INITIALIZATION ---
@@ -604,7 +737,7 @@
       console.warn("Firebase config error:", e);
     }
 
-    // Accounts & Crawls Storage
+    // Storage Helpers
     const getDb = k => JSON.parse(localStorage.getItem(k) || '{}');
     const setDb = (k, v) => localStorage.setItem(k, JSON.stringify(v));
     const getUser = () => localStorage.getItem('pub_crawl_email');
@@ -612,6 +745,48 @@
       const e = getUser(); if (!e) return "Crawler";
       return getDb('users_db')[e]?.username || e.split('@')[0];
     };
+
+    // LOCAL CREATION PROGRESS PERSISTENCE
+    const SAVE_DRAFT_KEY = 'crawl_creation_draft';
+
+    function saveLocalCreationDraft() {
+      const draft = {
+        name: $('crawl-name')?.value || '',
+        centeredTitle: $('centered-crawl-title')?.innerText || '',
+        selectedPubs,
+        nearbyPubs
+      };
+      setDb(SAVE_DRAFT_KEY, draft);
+    }
+
+    function loadLocalCreationDraft() {
+      const draft = getDb(SAVE_DRAFT_KEY);
+      if (draft && (draft.name || draft.selectedPubs?.length)) {
+        selectedPubs = draft.selectedPubs || [];
+        nearbyPubs = draft.nearbyPubs || [];
+        if ($('crawl-name')) $('crawl-name').value = draft.name || '';
+        if (draft.centeredTitle && $('centered-crawl-title')) {
+          $('centered-crawl-title').innerText = draft.centeredTitle;
+          $('centered-crawl-title').style.display = 'block';
+          $('crawl-name').style.display = 'none';
+          $('create-header-container').style.display = 'none';
+          $('venue-selection-container').style.display = 'flex';
+        }
+        $('pub-count').innerText = selectedPubs.length;
+        if (selectedPubs.length > 0) $('save-crawl-btn').style.display = 'block';
+      }
+    }
+
+    function clearLocalCreationDraft() {
+      localStorage.removeItem(SAVE_DRAFT_KEY);
+    }
+
+    function deleteCrawlCreationDraft() {
+      if (confirm("Are you sure you want to discard this crawl draft? All un-saved venue choices will be lost.")) {
+        resetCreateCrawlPage();
+        showTab('mycrawls');
+      }
+    }
 
     function checkAuth() {
       const e = getUser();
@@ -633,7 +808,6 @@
       const username = $('auth-username').value.trim(), email = $('auth-email').value.trim().toLowerCase(), password = $('auth-password').value.trim();
       if (!username || !email || !password) return alert("Fill in all fields.");
       const dbUsers = getDb('users_db');
-      
       if (dbUsers[email]) return alert("This email is already registered. Please Sign In.");
       
       dbUsers[email] = { email, password, username }; setDb('users_db', dbUsers);
@@ -655,7 +829,7 @@
 
     function handleLogout() { localStorage.removeItem('pub_crawl_email'); checkAuth(); showTab('account'); }
 
-    // REAL-TIME CLOUD DATABASE SYNC (FIREBASE + FALLBACK)
+    // REAL-TIME CLOUD DATABASE SYNC
     const saveCrawl = async c => {
       const h = getDb('crawls_db'); h[c.code] = c; setDb('crawls_db', h);
       if (db) {
@@ -692,7 +866,7 @@
       const history = getDb('crawls_db');
       for (const code of Object.keys(history)) {
         const crawl = history[code];
-        if (crawl.status === 'active' && crawl.participants.some(p => p.email === email)) {
+        if (crawl.status === 'active' && crawl.isLive && crawl.participants.some(p => p.email === email)) {
           return crawl;
         }
       }
@@ -711,6 +885,7 @@
         if (t === 'create' && map) google.maps.event.trigger(map, "resize");
         else if (t === 'setup' && setupMap) { google.maps.event.trigger(setupMap, "resize"); if (selectedPubs[0]) setupMap.setCenter({ lat: selectedPubs[0].latitude, lng: selectedPubs[0].longitude }); }
         else if (t === 'live' && liveMap) { google.maps.event.trigger(liveMap, "resize"); if (currentCrawl?.pubs[0]) liveMap.setCenter({ lat: currentCrawl.pubs[0].latitude, lng: currentCrawl.pubs[0].longitude }); trackActiveLocation(); initLiveAddAutocomplete(); }
+        else if (t === 'preview' && previewMap) { google.maps.event.trigger(previewMap, "resize"); if (currentCrawl?.pubs[0]) previewMap.setCenter({ lat: currentCrawl.pubs[0].latitude, lng: currentCrawl.pubs[0].longitude }); }
         else if (t === 'review' && reviewMap) google.maps.event.trigger(reviewMap, "resize");
       }, 150);
     }
@@ -759,6 +934,7 @@
       } else {
         locDrawer.style.display = 'none';
       }
+      saveLocalCreationDraft();
     }
 
     function validateCrawlName() {
@@ -798,13 +974,6 @@
       if (targetId === 'map-drawer' && map) setTimeout(() => google.maps.event.trigger(map, "resize"), 100);
     }
 
-    function toggleDrawer(id, btnId, showText, hideText) {
-      const el = $(id), b = $(btnId);
-      const isHidden = el.style.display === 'none';
-      el.style.display = isHidden ? 'block' : 'none';
-      b.innerText = isHidden ? hideText : showText;
-    }
-
     function toggleMasterOptionsDrawer() {
       const drawer = $('master-options-drawer');
       const btn = $('toggle-master-options-btn');
@@ -813,21 +982,60 @@
       btn.innerText = isHidden ? 'Close Route Options' : 'Route Options';
     }
 
+    /* TOGGLE FUNCTIONS FOR ROUTE OPTIONS DRAWERS WITH AUTO-CLOSE OF OTHERS */
+    function closeAllRouteOptionDrawers() {
+      const mapDrawer = $('live-map-drawer');
+      const routeDrawer = $('route-list-drawer');
+      const addDrawer = $('live-add-drawer');
+
+      if (mapDrawer) mapDrawer.style.display = 'none';
+      if (routeDrawer) routeDrawer.style.display = 'none';
+      if (addDrawer) addDrawer.style.display = 'none';
+
+      $('toggle-live-map-btn')?.classList.remove('active-drawer');
+      $('toggle-route-list-btn')?.classList.remove('active-drawer');
+      $('toggle-live-add-btn')?.classList.remove('active-drawer');
+
+      if ($('btn-map-lbl')) $('btn-map-lbl').innerText = 'Route Map';
+      if ($('btn-route-lbl')) $('btn-route-lbl').innerText = 'Full Route';
+      if ($('btn-add-lbl')) $('btn-add-lbl').innerText = 'Add Stop';
+    }
+
     function toggleLiveMapDrawer() {
       const drawer = $('live-map-drawer');
-      const btn = $('toggle-live-map-btn');
       const isHidden = drawer.style.display === 'none';
-      drawer.style.display = isHidden ? 'block' : 'none';
-      btn.innerText = isHidden ? '🗺️ Hide Route Map' : '🗺️ View Route Map';
-      if (isHidden && liveMap) setTimeout(() => google.maps.event.trigger(liveMap, "resize"), 100);
+      closeAllRouteOptionDrawers();
+      
+      if (isHidden) {
+        drawer.style.display = 'block';
+        $('toggle-live-map-btn').classList.add('active-drawer');
+        $('btn-map-lbl').innerText = 'Hide Map';
+        if (liveMap) setTimeout(() => google.maps.event.trigger(liveMap, "resize"), 100);
+      }
     }
 
     function toggleRouteListDrawer() {
       const drawer = $('route-list-drawer');
-      const btn = $('toggle-route-list-btn');
       const isHidden = drawer.style.display === 'none';
-      drawer.style.display = isHidden ? 'block' : 'none';
-      btn.innerText = isHidden ? '📋 Hide Full Route' : '📋 View Full Route & History';
+      closeAllRouteOptionDrawers();
+
+      if (isHidden) {
+        drawer.style.display = 'block';
+        $('toggle-route-list-btn').classList.add('active-drawer');
+        $('btn-route-lbl').innerText = 'Hide Route';
+      }
+    }
+
+    function toggleLiveAddDrawer() {
+      const drawer = $('live-add-drawer');
+      const isHidden = drawer.style.display === 'none';
+      closeAllRouteOptionDrawers();
+
+      if (isHidden) {
+        drawer.style.display = 'block';
+        $('toggle-live-add-btn').classList.add('active-drawer');
+        $('btn-add-lbl').innerText = 'Close Add';
+      }
     }
 
     async function searchSpecificVenue() {
@@ -844,6 +1052,7 @@
         });
 
         inputEl.value = '';
+        saveLocalCreationDraft();
         renderPubResults();
 
         toggleSelectionDrawer('map-drawer');
@@ -859,7 +1068,7 @@
     async function executePubSearch(pos) {
       const { Map } = await google.maps.importLibrary("maps");
       const { Place } = await google.maps.importLibrary("places");
-      map = new Map($('map'), { center: pos, zoom: 15, mapId: 'DEMO_MAP_ID', gestureHandling: 'greedy' });
+      map = new Map($('map'), { center: pos, zoom: 15, mapId: 'DEMO_MAP_ID', gestureHandling: 'greedy', disableDefaultUI: true, zoomControl: true });
       createInfoWindow = new google.maps.InfoWindow();
       map.addListener("click", () => createInfoWindow?.close());
       if (createStartMarker) createStartMarker.setMap(null);
@@ -881,6 +1090,7 @@
         $('location-setup-drawer').style.display = 'none';
         $('venue-selection-container').style.display = 'flex';
 
+        saveLocalCreationDraft();
         toggleSelectionDrawer('map-drawer');
         renderPubResults();
       } else alert('No pubs found in this area.');
@@ -909,7 +1119,7 @@
 
     function openCreateInfoWindow(pub, marker) {
       const isSelected = selectedPubs.some(p => p.id === pub.id);
-      const div = document.createElement('div'); div.style.padding = '4px';
+      const div = document.createElement('div'); div.style.padding = '2px';
       div.innerHTML = `<div style="font-size:14px; margin-bottom:8px;"><strong>${pub.name}</strong><br><span style="font-size:12px; color:#94a3b8;">Rating: ${pub.rating} • Hours: ${pub.openingHours}</span></div><button id="iw-btn" class="btn ${isSelected ? 'btn-secondary' : ''}" style="width:100%; font-size:12px; padding:6px 10px;">${isSelected ? 'Remove from Crawl' : 'Add to Crawl'}</button>`;
       div.querySelector('#iw-btn').onclick = () => { togglePub(pub.id); openCreateInfoWindow(pub, marker); };
       createInfoWindow.setContent(div); createInfoWindow.open(map, marker);
@@ -921,6 +1131,7 @@
       selectedPubs = selectedPubs.some(p => p.id === id) ? selectedPubs.filter(p => p.id !== id) : [...selectedPubs, pub];
       $('pub-count').innerText = selectedPubs.length;
       $('save-crawl-btn').style.display = selectedPubs.length ? 'block' : 'none';
+      saveLocalCreationDraft();
       renderPubResults();
     }
 
@@ -940,6 +1151,7 @@
       $('venue-selection-container').style.display = 'none';
 
       if (createStartMarker) { createStartMarker.setMap(null); createStartMarker = null; }
+      clearLocalCreationDraft();
     }
 
     function goToSetupTab() { showTab('setup'); renderSetupList(); }
@@ -968,18 +1180,24 @@
         const temp = selectedPubs[i];
         selectedPubs[i] = selectedPubs[target];
         selectedPubs[target] = temp;
+        saveLocalCreationDraft();
         renderSetupList();
       }
     }
 
-    function removeSetupPub(i) { selectedPubs.splice(i, 1); $('pub-count').innerText = selectedPubs.length; renderSetupList(); }
+    function removeSetupPub(i) { 
+      selectedPubs.splice(i, 1); 
+      $('pub-count').innerText = selectedPubs.length; 
+      saveLocalCreationDraft();
+      renderSetupList(); 
+    }
 
     async function initOrUpdateSetupMap() {
       if (!selectedPubs.length) return;
       const { Map } = await google.maps.importLibrary("maps");
       const center = { lat: selectedPubs[0].latitude, lng: selectedPubs[0].longitude };
       if (!setupMap) {
-        setupMap = new Map($('setup-map'), { center, zoom: 14, mapId: 'DEMO_MAP_ID', gestureHandling: 'greedy' });
+        setupMap = new Map($('setup-map'), { center, zoom: 14, mapId: 'DEMO_MAP_ID', gestureHandling: 'greedy', disableDefaultUI: true, zoomControl: true });
         setupInfoWindow = new google.maps.InfoWindow();
         setupMap.addListener("click", () => setupInfoWindow?.close());
       } else setupMap.setCenter(center);
@@ -992,16 +1210,37 @@
       });
     }
 
-    async function launchLobby() {
+    async function saveCrawlDraftAndGoToMyCrawls() {
       if (!checkAuth()) return showTab('account');
       if (!selectedPubs.length) return alert("Add at least one pub!");
+      
       const code = Math.random().toString(36).substring(2, 8).toUpperCase();
       const hostEmail = getUser();
-      currentCrawl = { code, name: $('centered-crawl-title').innerText || $('crawl-name').value || 'Pub Crawl', hostEmail, status: 'active', completedDate: null, pubs: selectedPubs.map(p => ({ ...p, visited: false, commentsList: [], photos: [] })), participants: [{ email: hostEmail, username: getUsername() }] };
-      await saveCrawl(currentCrawl); resetCreateCrawlPage(); openLobby(currentCrawl);
+      const name = $('centered-crawl-title').innerText || $('crawl-name').value || 'Pub Crawl';
+
+      currentCrawl = { 
+        code, 
+        name, 
+        hostEmail, 
+        status: 'active', 
+        isLive: false,
+        completedDate: null, 
+        pubs: selectedPubs.map(p => ({ ...p, visited: false, commentsList: [], photos: [] })), 
+        participants: [{ email: hostEmail, username: getUsername() }] 
+      };
+
+      await saveCrawl(currentCrawl); 
+      resetCreateCrawlPage(); 
+      showTab('mycrawls');
     }
 
-    function openLobby(c) { currentCrawl = c; $('lobby-crawl-title').innerText = c.name; $('lobby-code').innerText = c.code; renderParticipants(); showTab('lobby'); }
+    function openLobby(c) { 
+      currentCrawl = c; 
+      $('lobby-crawl-title').innerText = c.name; 
+      $('lobby-code').innerText = c.code; 
+      renderParticipants(); 
+      showTab('lobby'); 
+    }
 
     function renderParticipants() {
       const list = $('participants-list'); list.innerHTML = '';
@@ -1032,18 +1271,79 @@
       if (crawl) {
         const email = getUser(), username = getUsername();
         if (!crawl.participants.some(p => p.email === email)) { crawl.participants.push({ email, username }); await saveCrawl(crawl); }
-        crawl.status === 'completed' ? openReviewPage(crawl) : openLobby(crawl);
+        
+        if (crawl.status === 'completed') {
+          openReviewPage(crawl);
+        } else if (!crawl.isLive) {
+          openPreviewPage(crawl);
+        } else {
+          startActiveCrawlWithData(crawl);
+        }
       } else alert("Crawl session code not found.");
     }
 
+    async function openPreviewPage(crawl) {
+      currentCrawl = crawl;
+      $('preview-title').innerText = crawl.name;
+      $('preview-code-badge').innerText = `Code: ${crawl.code}`;
+      showTab('preview');
+
+      const { Map } = await google.maps.importLibrary("maps");
+      previewMap = new Map($('preview-map'), { 
+        center: { lat: crawl.pubs[0].latitude, lng: crawl.pubs[0].longitude }, 
+        zoom: 14, 
+        gestureHandling: 'greedy',
+        disableDefaultUI: true,
+        zoomControl: true
+      });
+      previewInfoWindow = new google.maps.InfoWindow();
+
+      previewMarkers.forEach(m => m.setMap(null)); previewMarkers = [];
+      const container = $('preview-pub-list'); container.innerHTML = '';
+
+      crawl.pubs.forEach((pub, index) => {
+        const marker = new google.maps.Marker({
+          position: { lat: pub.latitude, lng: pub.longitude },
+          map: previewMap,
+          label: { text: `${index + 1}`, color: "#ffffff", fontWeight: "bold" },
+          title: pub.name
+        });
+        marker.addListener('click', () => {
+          previewInfoWindow.setContent(`<div style="font-size:14px; padding:2px;"><strong>Stop ${index + 1}: ${pub.name}</strong><br>Hours: ${pub.openingHours}</div>`);
+          previewInfoWindow.open(previewMap, marker);
+        });
+        previewMarkers.push(marker);
+
+        const card = document.createElement('div'); card.className = 'card';
+        card.innerHTML = `<div class="card-row"><strong>${index + 1}. ${pub.name}</strong><span style="font-size:12px; color:var(--text-muted);">${pub.openingHours}</span></div>`;
+        container.appendChild(card);
+      });
+    }
+
     async function startActiveCrawl() {
+      if (!currentCrawl) return;
+      currentCrawl.isLive = true;
+      await saveCrawl(currentCrawl);
+      startActiveCrawlWithData(currentCrawl);
+    }
+
+    async function startActiveCrawlWithData(crawl) {
+      currentCrawl = crawl;
       if (currentCrawl.status === 'completed') return openReviewPage(currentCrawl);
-      $('live-title').innerText = currentCrawl.name; $('live-code-badge').innerText = `Code: ${currentCrawl.code}`;
+      
+      $('live-title').innerText = currentCrawl.name; 
+      $('live-code-badge').innerText = `Code: ${currentCrawl.code}`;
       $('host-end-crawl-box').style.display = getUser() === currentCrawl.hostEmail ? 'block' : 'none';
       showTab('live');
 
       const { Map } = await google.maps.importLibrary("maps");
-      liveMap = new Map($('live-map'), { center: { lat: currentCrawl.pubs[0].latitude, lng: currentCrawl.pubs[0].longitude }, zoom: 15, gestureHandling: 'greedy' });
+      liveMap = new Map($('live-map'), { 
+        center: { lat: currentCrawl.pubs[0].latitude, lng: currentCrawl.pubs[0].longitude }, 
+        zoom: 15, 
+        gestureHandling: 'greedy',
+        disableDefaultUI: true,
+        zoomControl: true
+      });
       liveInfoWindow = new google.maps.InfoWindow();
       liveMap.addListener("click", () => liveInfoWindow?.close());
 
@@ -1052,6 +1352,7 @@
       trackActiveLocation();
     }
 
+    /* TARGET SPOTLIGHT CARD WITH SWAPPED BUTTON LOCATIONS */
     function renderTargetSpotlightCard() {
       const container = $('target-spotlight-box');
       if (!currentCrawl || !currentCrawl.pubs.length) return;
@@ -1060,9 +1361,9 @@
 
       if (firstUnvisitedIndex === -1) {
         container.innerHTML = `
-          <div style="text-align: center;">
-            <h3 style="margin:0 0 6px 0; color:var(--primary);">All Stops Completed</h3>
-            <p style="color:var(--text-muted); font-size:13px; margin:0 0 10px 0;">Great job! Review your group's photos and notes below.</p>
+          <div style="text-align: center; padding: 10px 0;">
+            <h3 style="margin:0 0 6px 0; color:var(--primary);">🎉 All Stops Completed!</h3>
+            <p style="color:var(--text-muted); font-size:13px; margin:0;">Great job! You can review memories and photos in full route below.</p>
           </div>
         `;
         return;
@@ -1072,36 +1373,37 @@
       const photosCount = (targetPub.photos || []).length;
 
       container.innerHTML = `
-        <div class="card-row" style="margin-bottom:6px;">
-          <span class="badge">TARGET STOP ${firstUnvisitedIndex + 1} OF ${currentCrawl.pubs.length}</span>
+        <div class="card-row" style="margin-bottom:8px;">
+          <span class="badge" style="background:var(--accent-amber); color:#000;">TARGET STOP ${firstUnvisitedIndex + 1} OF ${currentCrawl.pubs.length}</span>
           <span style="font-size:11px; color:var(--text-muted);">${targetPub.openingHours}</span>
         </div>
         
-        <h3 style="margin: 4px 0 6px 0; color: var(--text-main); font-size: 20px;">${targetPub.name}</h3>
+        <h3 style="margin: 4px 0 10px 0; color: var(--text-main); font-size: 22px; font-weight: 800;">${targetPub.name}</h3>
         
-        <div class="input-row" style="margin-top: 10px;">
-          <input type="text" id="spotlight-comment-input" placeholder="Add a comment as @${getUsername()}...">
-          <button class="btn btn-secondary btn-small" onclick="postSpotlightComment(${firstUnvisitedIndex})">Post</button>
+        <!-- Add Stop Photo at the top position -->
+        <input type="file" id="spotlight-photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(${firstUnvisitedIndex}, this)">
+        <button class="btn btn-secondary btn-large" style="width:100%; border:1px dashed var(--primary); margin-bottom: 10px;" onclick="$('spotlight-photo-input').click()">
+          📷 Add Stop Photo ${photosCount ? `(${photosCount})` : ''}
+        </button>
+
+        <div style="background: rgba(15, 23, 42, 0.5); padding: 10px; border-radius: 8px; border: 1px solid var(--card-border); margin-bottom: 12px;">
+          <div style="font-size: 11px; font-weight: bold; color: var(--text-muted); margin-bottom: 4px;">LIVE CHAT & NOTES</div>
+          <div class="comments-list">
+            ${(targetPub.commentsList || []).length ? (targetPub.commentsList || []).map(c => `<div class="comment-item"><span class="comment-author">@${c.author}:</span><span>${c.text}</span></div>`).join('') : '<div style="font-size:11px; color:var(--text-muted);">No comments yet.</div>'}
+          </div>
+          <div class="input-row" style="margin-top: 8px;">
+            <input type="text" id="spotlight-comment-input" placeholder="Comment as @${getUsername()}...">
+            <button class="btn btn-secondary btn-small" onclick="postSpotlightComment(${firstUnvisitedIndex})">Post</button>
+          </div>
         </div>
 
-        <div class="comments-list" style="margin-bottom:10px;">
-          ${(targetPub.commentsList || []).map(c => `<div class="comment-item"><span class="comment-author">@${c.author}:</span><span>${c.text}</span></div>`).join('')}
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
-          <input type="file" id="spotlight-photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(${firstUnvisitedIndex}, this)">
-          <button class="btn btn-large" style="background: var(--primary);" onclick="$('spotlight-photo-input').click()">
-            📷 Add Photo ${photosCount ? `(${photosCount})` : ''}
-          </button>
-        </div>
-
-        <div class="photo-grid" style="margin-top:8px;">
+        <div class="photo-grid" style="margin-bottom:12px;">
           ${(targetPub.photos || []).map(p => `<img src="${p}" class="photo-thumb">`).join('')}
         </div>
 
-        <!-- Pub Complete Button Below Photos -->
-        <button class="btn btn-secondary btn-small" style="width: 100%; margin-top: 8px;" onclick="toggleVisited(${firstUnvisitedIndex})">
-          Pub Complete
+        <!-- Mark Stop Complete at the bottom position -->
+        <button class="btn btn-large" style="width:100%; background: var(--primary);" onclick="toggleVisited(${firstUnvisitedIndex})">
+          ✓ Mark Stop Complete
         </button>
       `;
     }
@@ -1118,7 +1420,9 @@
     async function endCrawlAsHost() {
       if (currentCrawl && confirm(`End "${currentCrawl.name}" session for all?`)) {
         currentCrawl.status = 'completed'; currentCrawl.completedDate = new Date().toLocaleDateString('en-GB');
-        await saveCrawl(currentCrawl); openReviewPage(currentCrawl);
+        await saveCrawl(currentCrawl);
+        currentCrawl = null;
+        showTab('mycrawls'); // Auto-revert to My Crawls tab upon session end
       }
     }
 
@@ -1151,7 +1455,7 @@
       currentCrawl.pubs.splice(pos, 0, pendingLiveAddPub);
       await saveCrawl(currentCrawl);
       pendingLiveAddPub = null; $('live-search-result-box').style.display = 'none'; $('live-venue-search-input').value = '';
-      toggleDrawer('live-add-drawer', 'toggle-live-add-btn', '➕ Add Venue to Crawl', 'Close Add Venue');
+      toggleLiveAddDrawer();
       renderTargetSpotlightCard();
       renderLivePubList();
     }
@@ -1167,11 +1471,11 @@
     function renderLivePubList() {
       const list = $('live-pub-list'); list.innerHTML = '';
       liveMarkers.forEach(m => m.setMap(null)); liveMarkers = [];
-      let completed = 0, currentName = "All Stops Completed!";
+      let completed = 0, currentName = "All Completed!";
 
       currentCrawl.pubs.forEach((pub, index) => {
         if (pub.visited) completed++;
-        else if (currentName === "All Stops Completed!") currentName = `#${index + 1} ${pub.name}`;
+        else if (currentName === "All Completed!") currentName = `#${index + 1} ${pub.name}`;
 
         const marker = new google.maps.Marker({
           position: { lat: pub.latitude, lng: pub.longitude }, map: liveMap,
@@ -1186,10 +1490,10 @@
         card.innerHTML = `
           <div class="card-row">
             <div><strong>${index + 1}. ${pub.name}</strong><div style="font-size:12px; color:var(--text-muted);">Hours: ${pub.openingHours}</div></div>
-            <button class="btn btn-small ${pub.visited ? 'btn-secondary' : ''}" onclick="toggleVisited(${index})">${pub.visited ? 'Visited' : 'Pub Complete'}</button>
+            <button class="btn btn-small ${pub.visited ? 'btn-secondary' : ''}" onclick="toggleVisited(${index})">${pub.visited ? 'Completed' : 'Mark Done'}</button>
           </div>
           <div style="margin-top: 6px;">
-            <div class="input-row"><input type="text" id="comment-input-${index}" placeholder="Add a comment as @${getUsername()}..."><button class="btn btn-secondary btn-small" onclick="postComment(${index})">Post</button></div>
+            <div class="input-row"><input type="text" id="comment-input-${index}" placeholder="Comment as @${getUsername()}..."><button class="btn btn-secondary btn-small" onclick="postComment(${index})">Post</button></div>
             <div class="comments-list">${(pub.commentsList || []).map(c => `<div class="comment-item"><span class="comment-author">@${c.author}:</span><span>${c.text}</span></div>`).join('')}</div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 6px;">
               <input type="file" id="photo-input-${index}" accept="image/*" style="display:none" onchange="uploadPhoto(${index}, this)">
@@ -1199,7 +1503,8 @@
           </div>`;
         list.appendChild(card);
       });
-      $('stat-completed').innerText = `${completed} / ${currentCrawl.pubs.length} Visited`; $('stat-current').innerText = currentName;
+      $('stat-completed').innerText = `${completed} / ${currentCrawl.pubs.length}`; 
+      $('stat-current').innerText = currentName;
     }
 
     async function postComment(index) {
@@ -1243,7 +1548,7 @@
       if (container.style.display === 'none') {
         container.style.display = 'block'; bText.innerText = 'Hide Route Map';
         const { Map } = await google.maps.importLibrary("maps");
-        reviewMap = new Map($('review-map'), { center: { lat: currentCrawl.pubs[0].latitude, lng: currentCrawl.pubs[0].longitude }, zoom: 14, gestureHandling: 'greedy' });
+        reviewMap = new Map($('review-map'), { center: { lat: currentCrawl.pubs[0].latitude, lng: currentCrawl.pubs[0].longitude }, zoom: 14, gestureHandling: 'greedy', disableDefaultUI: true, zoomControl: true });
         reviewInfoWindow = new google.maps.InfoWindow();
         reviewMap.addListener("click", () => reviewInfoWindow?.close());
         renderReviewMapMarkers();
@@ -1256,7 +1561,7 @@
       currentCrawl.pubs.forEach((pub, index) => {
         const marker = new google.maps.Marker({ position: { lat: pub.latitude, lng: pub.longitude }, map: reviewMap, label: { text: `${index + 1}`, color: "#ffffff", fontWeight: "bold" }, title: pub.name });
         marker.addListener('click', () => {
-          const div = document.createElement('div'); div.style.padding = '4px';
+          const div = document.createElement('div'); div.style.padding = '2px';
           div.innerHTML = `<div style="font-size:14px; margin-bottom:8px;"><strong>${index + 1}. ${pub.name}</strong><br><span style="font-size:12px; color:#94a3b8;">Status: ${pub.visited ? 'Visited' : 'Skipped'}</span></div><button id="rev-rm-btn" class="btn btn-danger" style="width:100%; font-size:12px; padding:6px 10px;">Remove Venue</button>`;
           div.querySelector('#rev-rm-btn').onclick = () => removeVenueFromReview(index);
           reviewInfoWindow.setContent(div); reviewInfoWindow.open(reviewMap, marker);
@@ -1290,7 +1595,17 @@
       keys.reverse().forEach(code => {
         const crawl = history[code], isHost = crawl.hostEmail === user, isEnded = crawl.status === 'completed';
         const card = document.createElement('div'); card.className = 'card';
-        card.innerHTML = `<div class="card-row"><div><strong>${crawl.name}</strong> ${isHost ? '<span class="badge">Host</span>' : ''} ${isEnded ? '<span class="badge badge-completed">Ended</span>' : ''}<div style="font-size:12px; color:var(--text-muted);">${crawl.pubs.length} Stops • Code: <strong>${crawl.code}</strong> ${isEnded ? `• Completed: ${crawl.completedDate}` : ''}</div></div><div style="display:flex; gap:6px;">${isEnded ? `<button class="btn btn-secondary btn-small" onclick='openReviewByCode("${crawl.code}")'>Review</button>` : `<button class="btn btn-small" onclick='resumeCrawl("${crawl.code}")'>Open</button>`}<button class="btn btn-secondary btn-small" onclick='openManageCrawl("${crawl.code}")'>Manage</button></div></div>`;
+        card.innerHTML = `
+          <div class="card-row">
+            <div>
+              <strong>${crawl.name}</strong> ${isHost ? '<span class="badge">Host</span>' : ''} ${isEnded ? '<span class="badge badge-completed">Ended</span>' : (crawl.isLive ? '<span class="badge badge-live">Live</span>' : '<span class="badge">Draft</span>')}
+              <div style="font-size:12px; color:var(--text-muted);">${crawl.pubs.length} Stops • Code: <strong>${crawl.code}</strong> ${isEnded ? `• Completed: ${crawl.completedDate}` : ''}</div>
+            </div>
+            <div style="display:flex; gap:6px;">
+              ${isEnded ? `<button class="btn btn-secondary btn-small" onclick='openReviewByCode("${crawl.code}")'>Review</button>` : `<button class="btn btn-small" onclick='resumeCrawl("${crawl.code}")'>Open</button>`}
+              <button class="btn btn-secondary btn-small" onclick='openManageCrawl("${crawl.code}")'>Manage</button>
+            </div>
+          </div>`;
         container.appendChild(card);
       });
     }
@@ -1326,31 +1641,42 @@
     async function leaveCrawlFromManage() {
       if (!managingCrawlCode) return; const crawl = await fetchCrawl(managingCrawlCode); if (!crawl) return;
       const email = getUser();
-      if (confirm(`Leave "${crawl.name}"?`)) { crawl.participants = crawl.participants.filter(p => p.email !== email); await saveCrawl(crawl); deleteCrawl(managingCrawlCode); closeManageCrawl(); renderMyCrawlsList(); }
+      if (confirm(`Leave "${crawl.name}"?`)) { crawl.participants = crawl.participants.filter(p => p.email !== email); await saveCrawl(crawl); deleteCrawl(managingCrawlCode); closeManageCrawl(); showTab('mycrawls'); }
     }
 
     async function deleteCrawlFromManage() {
       if (!managingCrawlCode) return;
-      if (confirm("Delete crawl permanently?")) { await deleteCrawl(managingCrawlCode); closeManageCrawl(); renderMyCrawlsList(); }
+      if (confirm("Delete crawl permanently?")) { await deleteCrawl(managingCrawlCode); closeManageCrawl(); showTab('mycrawls'); }
     }
 
     async function resumeCrawl(code) {
       const crawl = await fetchCrawl(code);
-      if (crawl) { currentCrawl = crawl; crawl.status === 'completed' ? openReviewPage(crawl) : startActiveCrawl(); }
+      if (!crawl) return;
+      
+      currentCrawl = crawl;
+      const isHost = crawl.hostEmail === getUser();
+
+      if (crawl.status === 'completed') {
+        openReviewPage(crawl);
+      } else if (!crawl.isLive) {
+        if (isHost) {
+          openLobby(crawl);
+        } else {
+          openPreviewPage(crawl);
+        }
+      } else {
+        startActiveCrawlWithData(crawl);
+      }
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
       checkAuth();
-      
-      const finishBtn = $('finish-setup-btn');
-      if (finishBtn) {
-        finishBtn.addEventListener('pointerdown', e => { e.preventDefault(); launchLobby(); });
-      }
+      loadLocalCreationDraft();
 
       const activeCrawl = await checkForActiveUserCrawl();
       if (activeCrawl) {
         currentCrawl = activeCrawl;
-        startActiveCrawl();
+        startActiveCrawlWithData(activeCrawl);
       }
     });
   </script>
