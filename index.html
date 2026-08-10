@@ -18,8 +18,14 @@
     .btn-secondary { background: #444; }
     .card { background: white; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
   </style>
-  <!-- Replace YOUR_GOOGLE_MAPS_API_KEY with your restricted API key -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdwemUf93q4DVGYGeAhXG39zRj3r8x0n0&libraries=places"></script>
+
+  <!-- Modern Dynamic Bootstrap Loader for Google Maps JS API -->
+  <script>
+    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+      key: "AIzaSyBdwemUf93q4DVGYGeAhXG39zRj3r8x0n0", // Replace with your restricted API key
+      v: "weekly"
+    });
+  </script>
 </head>
 <body>
 
@@ -86,47 +92,63 @@
       document.getElementById(`nav-${tabName}`).classList.add('active');
     }
 
-    // Geocode area & search nearby pubs using Google Places SDK
+    // Geocode area & search nearby pubs using modern Places API (Place.searchNearby)
     async function searchLocation() {
       const query = document.getElementById('location-input').value;
       if (!query) return;
 
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ address: query }, (results, status) => {
-        if (status === 'OK' && results[0]) {
-          const location = results[0].geometry.location;
+      try {
+        // Dynamically import required libraries
+        const { Map } = await google.maps.importLibrary("maps");
+        const { Geocoder } = await google.maps.importLibrary("geocoding");
+        const { Place } = await google.maps.importLibrary("places");
+        const { AdvancedMarkerElement, Marker } = await google.maps.importLibrary("marker");
 
-          map = new google.maps.Map(document.getElementById('map'), {
-            center: location,
-            zoom: 14
-          });
+        const geocoder = new Geocoder();
+        const geocodeResult = await geocoder.geocode({ address: query });
 
-          // Fetch nearby pubs using Google Places Service directly in browser
-          const service = new google.maps.places.PlacesService(map);
-          const request = {
-            location: location,
-            radius: 2000,
-            type: 'bar' // Correct single string for legacy PlacesService
-          };
-
-          service.nearbySearch(request, (places, placesStatus) => {
-            if (placesStatus === google.maps.places.PlacesServiceStatus.OK && places) {
-              nearbyPubs = places.map(p => ({
-                id: p.place_id,
-                name: p.name,
-                latitude: p.geometry.location.lat(),
-                longitude: p.geometry.location.lng(),
-                rating: p.rating || 'N/A'
-              }));
-              renderPubResults();
-            } else {
-              alert('No pubs found in this area or status error: ' + placesStatus);
-            }
-          });
-        } else {
+        if (!geocodeResult.results || !geocodeResult.results.length) {
           alert('Location not found');
+          return;
         }
-      });
+
+        const location = geocodeResult.results[0].geometry.location;
+
+        map = new Map(document.getElementById('map'), {
+          center: location,
+          zoom: 14,
+          mapId: 'DEMO_MAP_ID' // Required for modern markers
+        });
+
+        // Modern Google Places API Search
+        const request = {
+          fields: ["displayName", "location", "rating", "id"],
+          locationRestriction: {
+            center: location,
+            radius: 2000
+          },
+          includedPrimaryTypes: ["bar"],
+          maxResultCount: 20
+        };
+
+        const { places } = await Place.searchNearby(request);
+
+        if (places && places.length > 0) {
+          nearbyPubs = places.map(p => ({
+            id: p.id,
+            name: p.displayName || 'Unknown Pub',
+            latitude: p.location.lat(),
+            longitude: p.location.lng(),
+            rating: p.rating || 'N/A'
+          }));
+          renderPubResults();
+        } else {
+          alert('No pubs found in this area.');
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+        alert("Search failed: " + err.message);
+      }
     }
 
     function renderPubResults() {
@@ -185,15 +207,16 @@
       }
     }
 
-    function loadLiveCrawl(crawl) {
+    async function loadLiveCrawl(crawl) {
       document.getElementById('nav-live').style.display = 'inline-block';
       document.getElementById('live-title').innerText = `🍻 ${crawl.name}`;
       document.getElementById('live-code').innerText = crawl.code;
 
       showTab('live');
 
+      const { Map } = await google.maps.importLibrary("maps");
       const center = { lat: crawl.pubs[0].latitude, lng: crawl.pubs[0].longitude };
-      liveMap = new google.maps.Map(document.getElementById('live-map'), { center, zoom: 14 });
+      liveMap = new Map(document.getElementById('live-map'), { center, zoom: 14 });
 
       renderLivePubList();
     }
