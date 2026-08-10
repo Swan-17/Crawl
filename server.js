@@ -1,20 +1,30 @@
-require('dotenv').config();
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Serve static files (index.html, CSS, client-side JS)
-app.use(express.static(path.join(__dirname, 'public'))); 
-// Note: If index.html is in your root folder instead of /public, change to:
-// app.use(express.static(__dirname));
-
-// Endpoint for frontend to retrieve the API key
-app.get('/api/maps-key', (req, res) => {
-  res.json({ key: process.env.GOOGLE_MAPS_API_KEY });
+// Serve index.html with the environment variable injected
+app.get('/', (req, res) => {
+  const indexPath = path.join(__dirname, 'index.html');
+  fs.readFile(indexPath, 'utf8', (err, html) => {
+    if (err) {
+      console.error('Error reading index.html:', err);
+      return res.status(500).send('Server Error');
+    }
+    
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY || '';
+    const renderedHtml = html.replace('YOUR_GOOGLE_MAPS_API_KEY', apiKey);
+    
+    res.send(renderedHtml);
+  });
 });
 
-const PORT = process.env.PORT || 3000;
+// Serve static assets if present
+app.use(express.static(__dirname));
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🍺 Pub Crawl server running at http://localhost:${PORT}`);
 });
